@@ -3,26 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Maze Runner Snake</title>
+    <meta name="description" content="Play Maze Runner Snake game online for free. Navigate through randomly appearing walls in this tricky HTML5 puzzle snake game.">
+    <meta name="keywords" content="play maze runner snake, snake game with walls, html5 puzzle snake, free unblocked games, browser arcade games">
+    <title>Play Maze Runner Snake Game Online Free - SnakeZilla</title>
     <style>
-        body { background: #1a1a2e; color: #fff; text-align: center; margin: 0; font-family: Tahoma, sans-serif; overflow: hidden; }
+        body { background: #1a1a2e; color: #fff; text-align: center; margin: 0; font-family: Tahoma, sans-serif; overflow-x: hidden; }
         header { background: #16213e; padding: 10px; border-bottom: 2px solid #e94560; }
         h2 { margin: 0; color: #e94560; text-transform: uppercase; letter-spacing: 2px;}
         .score-board { display: flex; justify-content: center; gap: 20px; margin: 10px 0; font-size: 18px; font-weight: bold; color: #f1c40f; }
         .game-container { position: relative; display: flex; flex-direction: column; align-items: center; }
-        canvas { background: #0f3460; border: 4px solid #535c68; border-radius: 5px; box-shadow: 0 0 20px rgba(0,0,0,0.5);}
+        canvas { background: #0f3460; border: 4px solid #535c68; border-radius: 5px; box-shadow: 0 0 20px rgba(0,0,0,0.5); max-width: 95vw;}
         
         .overlay { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 400px; max-width: 95vw; height: 400px; background: rgba(22, 33, 62, 0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 5px; z-index: 10; border: 2px solid #e94560;}
         .overlay h3 { font-size: 32px; color: #e94560; margin-bottom: 20px; text-shadow: 0 0 10px #e94560; }
         .action-btn { background: #e94560; color: #fff; border: none; padding: 12px 30px; font-size: 20px; font-weight: bold; border-radius: 25px; cursor: pointer; box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4); }
         .action-btn:active { transform: scale(0.95); }
 
-        .controls { display: grid; grid-template-columns: 60px 60px 60px; justify-content: center; gap: 5px; margin-top: 15px; }
+        .controls { display: grid; grid-template-columns: 60px 60px 60px; justify-content: center; gap: 5px; margin-top: 15px; margin-bottom: 20px;}
         .ctrl-btn { background: #e94560; color: white; border: none; border-radius: 8px; font-size: 20px; padding: 12px; touch-action: manipulation; font-weight: bold;}
+
+        /* SEO Article & Ad Space */
+        .ad-space { width: 100%; max-width: 728px; height: 90px; background: #111; border: 1px dashed #444; margin: 20px auto; display: flex; align-items: center; justify-content: center; color: #666; font-size: 14px; font-family: sans-serif; }
+        .seo-article { max-width: 800px; margin: 0 auto 40px auto; padding: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 10px; text-align: left; line-height: 1.6; border: 1px solid #e94560; font-family: 'Segoe UI', sans-serif;}
+        .seo-article h1, .seo-article h3 { color: #e94560; }
+        .seo-article p { color: #dcdde1; font-size: 15px; }
+        .home-btn { display: inline-block; margin: 20px 0; padding: 10px 20px; background: #e94560; color: #fff; text-decoration: none; font-weight: bold; border-radius: 5px; }
     </style>
 </head>
 <body>
     <header><h2>🧱 Maze Runner</h2></header>
+    
+    <div class="ad-space">[ AdSense Banner 728x90 ]</div>
+
     <div class="score-board">
         <div id="levelDisplay" style="color: #2ecc71;">Level: 1</div>
         <div id="scoreDisplay">Score: 0</div>
@@ -30,12 +42,10 @@
     
     <div class="game-container">
         <canvas id="gameCanvas" width="400" height="400"></canvas>
-        
         <div id="startScreen" class="overlay">
             <h3>Enter The Maze</h3>
             <button class="action-btn" onclick="startGame()">▶️ Play Now</button>
         </div>
-
         <div id="gameOverScreen" class="overlay" style="display: none;">
             <h3>Crashed! 🧱💥</h3>
             <p id="finalScoreText" style="font-size: 20px; margin-bottom: 20px;">Score: 0</p>
@@ -50,10 +60,42 @@
         <button id="btnRight" class="ctrl-btn" style="grid-column: 3; grid-row: 2;">➡️</button>
     </div>
 
+    <div class="ad-space">[ AdSense Responsive Banner ]</div>
+
+    <!-- SEO Content Section -->
+    <div class="seo-article">
+        <h1>Play Maze Runner Snake Game Online</h1>
+        <p>Prepare yourself for the ultimate brain-teasing arcade experience with the <strong>Maze Runner Snake</strong> game. If you thought regular snake games were easy, think again! This free HTML5 browser game combines the classic mechanics of growing your snake with the challenging spatial awareness of a constantly changing labyrinth.</p>
+        
+        <h3>A Constantly Shifting Labyrinth</h3>
+        <p>At the start of the game, you will face four corner walls. Your objective is simple: navigate your neon green snake to eat the golden yellow bugs. However, crashing into the outer borders, your own tail, or the concrete maze walls will result in an instant Game Over.</p>
+
+        <h3>Dynamic Level Up System</h3>
+        <p>What makes the Maze Runner variation so unique is its dynamic difficulty. Every time you successfully consume 5 bugs, you <strong>Level Up</strong>. Not only does your snake slither faster, but two brand-new concrete walls will permanently spawn in random locations on the map! By Level 5, you'll be navigating a tight, claustrophobic maze that requires extreme precision.</p>
+
+        <h3>How to Survive</h3>
+        <ul>
+            <li><strong>Analyze the map:</strong> Every time a new wall spawns, quickly take a mental note of the blocked paths.</li>
+            <li><strong>Don't trap yourself:</strong> Avoid slithering into tight U-shaped enclosures formed by the walls, especially when your snake is long.</li>
+            <li><strong>Play on any device:</strong> Use arrow keys on your keyboard or the on-screen D-Pad buttons to play smoothly on mobile phones and tablets.</li>
+        </ul>
+        
+        <center><a href="index.html" class="home-btn">⬅️ Back to More Games</a></center>
+    </div>
+
+    <!-- Footer for AdSense Compliance -->
+    <footer style="margin-top: 40px; padding: 25px; background: rgba(0, 0, 0, 0.8); border-top: 2px solid #e94560; font-size: 15px; font-family: 'Segoe UI', sans-serif;">
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-bottom: 15px;">
+            <a href="about.html" style="color: #e94560; text-decoration: none;">About Us</a>
+            <a href="contact.html" style="color: #e94560; text-decoration: none;">Contact Us</a>
+            <a href="privacy.html" style="color: #e94560; text-decoration: none;">Privacy Policy</a>
+            <a href="terms.html" style="color: #e94560; text-decoration: none;">Terms of Service</a>
+        </div>
+        <p style="color: #a4b0be; margin: 0; font-size: 13px;">&copy; 2026 SnakeZilla Games.</p>
+    </footer>
+
     <script>
         const canvas = document.getElementById("gameCanvas"); const ctx = canvas.getContext("2d");
-        
-        // --- AUDIO ---
         const AudioContext = window.AudioContext || window.webkitAudioContext; let audioCtx;
         function initAudio() { if (!audioCtx) audioCtx = new AudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume(); }
         function playSound(type) {
@@ -66,7 +108,6 @@
         let box = 20, score = 0, level = 1, speed = 180, d = "RIGHT";
         let snake = []; let food = {}; let walls = []; let gameLoop; let isGameRunning = false;
 
-        // Base corner walls
         const baseWalls = [
             {x: 2*box, y: 2*box}, {x: 3*box, y: 2*box}, {x: 2*box, y: 3*box},
             {x: 17*box, y: 2*box}, {x: 16*box, y: 2*box}, {x: 17*box, y: 3*box},
@@ -81,7 +122,6 @@
                 valid = true;
                 for(let w of walls) if(f.x == w.x && f.y == w.y) valid = false;
                 for(let s of snake) if(f.x == s.x && f.y == s.y) valid = false;
-                // Don't spawn walls too close to starting area (top-left)
                 if(f.x < 5*box && f.y < 5*box) valid = false; 
             } return f;
         }
@@ -120,7 +160,6 @@
             if(!isGameRunning) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Draw Walls
             ctx.fillStyle = "#7f8c8d"; ctx.shadowBlur = 5; ctx.shadowColor = "#000";
             for(let w of walls) {
                 ctx.fillRect(w.x, w.y, box, box);
@@ -137,8 +176,6 @@
 
             if (snakeX == food.x && snakeY == food.y) {
                 score++; playSound('eat'); food = getFreePos();
-                
-                // Maze Level Logic: Add 2 random wall blocks every level!
                 if(score % 5 === 0) {
                     level++; playSound('levelUp');
                     if(speed > 80) speed -= 15;
@@ -161,8 +198,7 @@
         function startGame() {
             initAudio(); document.getElementById("startScreen").style.display = "none"; document.getElementById("gameOverScreen").style.display = "none";
             snake = [{ x: 2 * box, y: 5 * box }]; score = 0; level = 1; speed = 180; d = "RIGHT"; isGameRunning = true; 
-            walls = [...baseWalls]; // Reset walls
-            food = getFreePos();
+            walls = [...baseWalls]; food = getFreePos();
             document.getElementById("scoreDisplay").innerText = "Score: " + score; document.getElementById("levelDisplay").innerText = "Level: " + level;
             clearTimeout(gameLoop); draw();
         }
