@@ -2,101 +2,276 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KhelZilla - Play Free HTML5 Games</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KhelZilla - Advanced Snake</title>
     <style>
         body {
-            background-color: #1a1a2e;
+            background-color: #0f0f1a;
             color: #ffffff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: center;
             margin: 0;
             padding: 0;
+            overflow: hidden; /* Mobile par scroll rokne ke liye */
         }
         header {
-            background-color: #e94560;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            background: linear-gradient(90deg, #ff4757, #ff6b81);
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
         }
-        h1 { margin: 0; font-size: 36px; letter-spacing: 2px;}
+        h1 { margin: 0; font-size: 28px; text-transform: uppercase; letter-spacing: 2px;}
+        
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 15px 0;
+            font-size: 20px;
+            font-weight: bold;
+            color: #2ed573;
+        }
+
         .game-container {
-            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
+
         canvas {
-            background-color: #16213e;
-            border: 4px solid #0f3460;
+            background-color: #1e1e2f;
+            border: 4px solid #2ed573;
+            border-radius: 15px;
+            box-shadow: 0 0 25px rgba(46, 213, 115, 0.3);
+            max-width: 95vw;
+        }
+
+        /* Mobile Controls Styling */
+        .controls {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 60px 60px 60px;
+            grid-template-rows: 60px 60px;
+            gap: 10px;
+            justify-content: center;
+        }
+        .controls button {
+            background-color: #2f3542;
+            color: white;
+            border: 2px solid #57606f;
             border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 5px #1e272e;
+            user-select: none;
+            touch-action: manipulation;
         }
-        .instructions {
-            margin-top: 15px;
-            color: #a2a2bd;
+        .controls button:active {
+            box-shadow: 0 2px #1e272e;
+            transform: translateY(3px);
+            background-color: #ff4757;
         }
-        .footer {
-            margin-top: 40px;
-            font-size: 14px;
-            color: #7a7a9a;
-        }
+        #btnUp { grid-column: 2; grid-row: 1; }
+        #btnLeft { grid-column: 1; grid-row: 2; }
+        #btnDown { grid-column: 2; grid-row: 2; }
+        #btnRight { grid-column: 3; grid-row: 2; }
+
     </style>
 </head>
 <body>
 
     <header>
-        <h1>🎮 KhelZilla</h1>
-        <p>Your Ultimate Arcade Portal</p>
+        <h1>🐍 Modern Snake</h1>
     </header>
 
+    <div class="score-board">
+        <div id="scoreDisplay">Score: 0</div>
+        <div id="highScoreDisplay">High Score: 0</div>
+    </div>
+
     <div class="game-container">
-        <h2>Classic Snake Game</h2>
-        <!-- Game Screen -->
         <canvas id="gameCanvas" width="400" height="400"></canvas>
-        <p class="instructions">Controls: Use ⬆️ ⬇️ ⬅️ ➡️ Arrow Keys to move</p>
+        
+        <!-- Mobile D-PAD -->
+        <div class="controls">
+            <button id="btnUp">⬆️</button>
+            <button id="btnLeft">⬅️</button>
+            <button id="btnDown">⬇️</button>
+            <button id="btnRight">➡️</button>
+        </div>
     </div>
 
-    <div class="footer">
-        <p>Keep playing! More games coming soon...</p>
-    </div>
-
-    <!-- Game Logic (JavaScript) -->
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
 
+        // --- AUDIO SYSTEM (Web Audio API) ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function playSound(type) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'eat') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            } else if (type === 'die') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.5);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.5);
+            }
+        }
+
+        // --- GAME LOGIC ---
         let box = 20;
         let snake = [];
-        snake[0] = { x: 9 * box, y: 10 * box };
+        snake[0] = { x: 9 * box, y: 10 * box }; // Starting position
         
-        let food = {
-            x: Math.floor(Math.random() * 19 + 1) * box,
-            y: Math.floor(Math.random() * 19 + 1) * box
-        };
-        
+        let food = generateFood();
         let score = 0;
-        let d;
+        let highScore = localStorage.getItem("snakeHighScore") || 0;
+        document.getElementById("highScoreDisplay").innerText = "High Score: " + highScore;
+        
+        let d = "RIGHT"; // Default direction
+        let gameLoop;
+        let speed = 120; // Initial speed
 
-        document.addEventListener("keydown", direction);
+        function generateFood() {
+            return {
+                x: Math.floor(Math.random() * 19 + 1) * box,
+                y: Math.floor(Math.random() * 19 + 1) * box
+            };
+        }
 
-        function direction(event) {
-            let key = event.keyCode;
-            if (key == 37 && d != "RIGHT") d = "LEFT";
-            else if (key == 38 && d != "DOWN") d = "UP";
-            else if (key == 39 && d != "LEFT") d = "RIGHT";
-            else if (key == 40 && d != "UP") d = "DOWN";
+        // Controls (Keyboard)
+        document.addEventListener("keydown", (e) => {
+            initAudio(); // Initialize audio on first user interaction
+            if (e.keyCode == 37 && d != "RIGHT") d = "LEFT";
+            else if (e.keyCode == 38 && d != "DOWN") d = "UP";
+            else if (e.keyCode == 39 && d != "LEFT") d = "RIGHT";
+            else if (e.keyCode == 40 && d != "UP") d = "DOWN";
+        });
+
+        // Controls (Mobile Buttons)
+        const bindButton = (id, newDir, oppDir) => {
+            const btn = document.getElementById(id);
+            const handler = (e) => {
+                e.preventDefault(); // Stop double-firing on mobile
+                initAudio();
+                if (d != oppDir) d = newDir;
+            };
+            btn.addEventListener("touchstart", handler);
+            btn.addEventListener("mousedown", handler);
+        };
+
+        bindButton("btnUp", "UP", "DOWN");
+        bindButton("btnDown", "DOWN", "UP");
+        bindButton("btnLeft", "LEFT", "RIGHT");
+        bindButton("btnRight", "RIGHT", "LEFT");
+
+        // --- DRAWING FUNCTIONS ---
+
+        function drawBug(x, y) {
+            const centerX = x + box / 2;
+            const centerY = y + box / 2;
+            
+            // Draw 6 Legs
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            // Left legs
+            ctx.moveTo(centerX - 5, centerY - 6); ctx.lineTo(centerX - 12, centerY - 10);
+            ctx.moveTo(centerX - 6, centerY); ctx.lineTo(centerX - 14, centerY);
+            ctx.moveTo(centerX - 5, centerY + 6); ctx.lineTo(centerX - 12, centerY + 10);
+            // Right legs
+            ctx.moveTo(centerX + 5, centerY - 6); ctx.lineTo(centerX + 12, centerY - 10);
+            ctx.moveTo(centerX + 6, centerY); ctx.lineTo(centerX + 14, centerY);
+            ctx.moveTo(centerX + 5, centerY + 6); ctx.lineTo(centerX + 12, centerY + 10);
+            ctx.stroke();
+
+            // Draw Body (Red)
+            ctx.fillStyle = "#ff4757";
+            ctx.beginPath();
+            ctx.ellipse(centerX, centerY + 2, 6, 8, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw Head (Black)
+            ctx.fillStyle = "#2f3542";
+            ctx.beginPath();
+            ctx.arc(centerX, centerY - 5, 4, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawSnakePart(part, index) {
+            const isHead = index === 0;
+            const centerX = part.x + box / 2;
+            const centerY = part.y + box / 2;
+
+            // Body shadow/glow
+            ctx.shadowBlur = isHead ? 10 : 5;
+            ctx.shadowColor = "#2ed573";
+            
+            // Color logic: Head is dark green, body alternates light green
+            ctx.fillStyle = isHead ? "#10ac84" : (index % 2 === 0 ? "#1dd1a1" : "#2ed573");
+            
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, box / 2.2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.shadowBlur = 0; // Reset shadow for eyes
+
+            // Draw Eyes on Head based on direction
+            if (isHead) {
+                ctx.fillStyle = "white";
+                let eye1X, eye1Y, eye2X, eye2Y;
+                let offset = 4;
+
+                if (d === "RIGHT") { eye1X = centerX+offset; eye1Y = centerY-offset; eye2X = centerX+offset; eye2Y = centerY+offset; }
+                else if (d === "LEFT") { eye1X = centerX-offset; eye1Y = centerY-offset; eye2X = centerX-offset; eye2Y = centerY+offset; }
+                else if (d === "UP") { eye1X = centerX-offset; eye1Y = centerY-offset; eye2X = centerX+offset; eye2Y = centerY-offset; }
+                else if (d === "DOWN") { eye1X = centerX-offset; eye1Y = centerY+offset; eye2X = centerX+offset; eye2Y = centerY+offset; }
+
+                // White part of eye
+                ctx.beginPath(); ctx.arc(eye1X, eye1Y, 3, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(eye2X, eye2Y, 3, 0, Math.PI * 2); ctx.fill();
+
+                // Black pupil
+                ctx.fillStyle = "black";
+                ctx.beginPath(); ctx.arc(eye1X + (d==="RIGHT"?1:d==="LEFT"?-1:0), eye1Y + (d==="DOWN"?1:d==="UP"?-1:0), 1.5, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(eye2X + (d==="RIGHT"?1:d==="LEFT"?-1:0), eye2Y + (d==="DOWN"?1:d==="UP"?-1:0), 1.5, 0, Math.PI * 2); ctx.fill();
+            }
         }
 
         function draw() {
+            // Clear screen
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+            // Draw Bug (Food)
+            drawBug(food.x, food.y);
+
+            // Draw Snake
             for (let i = 0; i < snake.length; i++) {
-                ctx.fillStyle = (i == 0) ? "#e94560" : "#ffffff";
-                ctx.fillRect(snake[i].x, snake[i].y, box, box);
-                ctx.strokeStyle = "#16213e";
-                ctx.strokeRect(snake[i].x, snake[i].y, box, box);
+                drawSnakePart(snake[i], i);
             }
 
-            ctx.fillStyle = "#00ffcc";
-            ctx.fillRect(food.x, food.y, box, box);
-
+            // Move Snake Head
             let snakeX = snake[0].x;
             let snakeY = snake[0].y;
 
@@ -105,28 +280,42 @@
             if (d == "RIGHT") snakeX += box;
             if (d == "DOWN") snakeY += box;
 
+            // Check if food is eaten
             if (snakeX == food.x && snakeY == food.y) {
                 score++;
-                food = {
-                    x: Math.floor(Math.random() * 19 + 1) * box,
-                    y: Math.floor(Math.random() * 19 + 1) * box
-                };
+                document.getElementById("scoreDisplay").innerText = "Score: " + score;
+                playSound('eat'); // Play eat sound
+                
+                food = generateFood();
+                
+                // Increase speed slightly
+                if(speed > 50) speed -= 2;
+                clearInterval(gameLoop);
+                gameLoop = setInterval(draw, speed);
             } else {
-                snake.pop();
+                snake.pop(); // Remove tail
             }
 
             let newHead = { x: snakeX, y: snakeY };
 
+            // Game Over Collision logic
             if (snakeX < 0 || snakeY < 0 || snakeX >= canvas.width || snakeY >= canvas.height || collision(newHead, snake)) {
-                clearInterval(game);
-                alert("Game Over! Your Score: " + score + ". Refresh page to play again.");
+                clearInterval(gameLoop);
+                playSound('die'); // Play game over sound
+                
+                if(score > highScore) {
+                    highScore = score;
+                    localStorage.setItem("snakeHighScore", highScore);
+                }
+                
+                setTimeout(() => {
+                    alert("Game Over! 💥 Your Score: " + score + "\nPress OK to restart.");
+                    document.location.reload();
+                }, 300);
+                return;
             }
 
-            snake.unshift(newHead);
-
-            ctx.fillStyle = "white";
-            ctx.font = "20px Arial";
-            ctx.fillText("Score: " + score, box, 1.5 * box);
+            snake.unshift(newHead); // Add new head
         }
 
         function collision(head, array) {
@@ -136,7 +325,8 @@
             return false;
         }
 
-        let game = setInterval(draw, 100);
+        // Start Game Loop
+        gameLoop = setInterval(draw, speed);
     </script>
 </body>
 </html>
