@@ -8,68 +8,113 @@
     <title>SnakeZilla - The Ultimate Snake Universe</title>
     <style>
         body {
-            background: radial-gradient(circle, #2b1055, #000000);
+            background: radial-gradient(circle, #1a1a3a, #050510); /* Deep space dark background */
             color: #fff;
-            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            /* Updated Fonts: Removed Comic Sans for a cleaner, modern tech/arcade look */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0; padding: 0; text-align: center;
+            overflow-x: hidden;
         }
-        header {
-            background: linear-gradient(45deg, #ff00cc, #3333ff);
-            padding: 30px;
-            box-shadow: 0 5px 20px rgba(255, 0, 204, 0.5);
-            border-bottom: 5px solid #00ffcc;
-        }
-        h1 {
-            font-size: 45px; margin: 0; text-transform: uppercase;
-            text-shadow: 0 0 15px #fff, 0 0 25px #ff00cc;
-            animation: pulse 2s infinite;
-        }
-        p.subtitle { font-size: 20px; color: #00ffcc; font-weight: bold; }
         
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        /* Updated Header for Neon Logo + Text */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.8); /* Semi-transparent dark background */
+            padding: 20px;
+            box-shadow: 0 5px 25px rgba(90, 90, 240, 0.3); /* Soft blue neon glow */
+            border-bottom: 2px solid #5a5af0; /* Neon blue bottom border */
+            backdrop-filter: blur(5px);
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Styling for the Coiled Snake/Planet Logo */
+        .logo-img {
+            height: 60px;
+            filter: drop-shadow(0 0 8px #5a5af0); /* Add neon glow to the logo itself */
+            border-radius: 5px;
+        }
+
+        h1 {
+            font-size: 40px; margin: 0; text-transform: uppercase;
+            /* Monospace font gives retro-arcade feel to titles */
+            font-family: 'Courier New', Courier, monospace; 
+            letter-spacing: 2px;
+            color: #8a8aff; /* Lighter neon blue */
+            text-shadow: 0 0 10px #8a8aff, 0 0 20px #5a5af0; /* Purple/Blue neon glow */
+            animation: glowPulse 2.5s infinite;
+        }
+        
+        p.subtitle { font-size: 18px; color: #00ffcc; font-weight: bold; margin: 5px 0 0 0; }
+        
+        @keyframes glowPulse {
+            0% { text-shadow: 0 0 10px #8a8aff, 0 0 20px #5a5af0; opacity: 1; }
+            50% { text-shadow: 0 0 15px #8a8aff, 0 0 30px #5a5af0; opacity: 0.9; }
+            100% { text-shadow: 0 0 10px #8a8aff, 0 0 20px #5a5af0; opacity: 1; }
         }
 
         .game-grid {
             display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; padding: 40px 20px;
+            max-width: 1200px; margin: 0 auto; /* Contain grid width on large screens */
         }
 
+        /* Updated Card Look: Darker, sharper neon borders */
         .game-card {
-            background: rgba(255, 255, 255, 0.1);
-            border: 3px solid #00ffcc; border-radius: 20px;
+            background: rgba(16, 16, 40, 0.7); /* Darker semi-transparent card */
+            border: 2px solid #3333aa; /* Darker border when not active */
+            border-radius: 15px;
             width: 260px; padding: 25px;
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
-            box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+            box-shadow: 0 0 10px rgba(90, 90, 240, 0.1);
+            position: relative; overflow: hidden; /* For inner glow effect on hover */
         }
+        
         .game-card:hover {
-            transform: translateY(-15px) scale(1.05);
-            box-shadow: 0 0 30px rgba(0, 255, 204, 0.8);
-            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-10px) scale(1.02);
+            border: 2px solid #00ffcc; /* Bright cyan border on hover */
+            box-shadow: 0 0 25px rgba(0, 255, 204, 0.6); /* Intense cyan neon glow */
+            background: rgba(16, 16, 40, 0.9);
         }
 
-        .game-icon { font-size: 70px; margin-bottom: 15px; }
-        .game-title { font-size: 24px; color: #ffeb3b; margin: 10px 0; text-shadow: 2px 2px 4px #000; }
-        .game-desc { color: #fff; font-size: 15px; margin-bottom: 20px; height: 45px; }
+        .game-icon { font-size: 70px; margin-bottom: 15px; display: inline-block; transition: 0.3s ease;}
+        .game-card:hover .game-icon { transform: scale(1.1); filter: drop-shadow(0 0 10px #ffeb3b); } /* Icon glows yellow on hover */
+
+        .game-title { font-size: 24px; color: #ffeb3b; margin: 10px 0; text-shadow: 1px 1px 2px #000; font-family: 'Courier New', monospace; font-weight: bold;}
+        .game-desc { color: #d1d1f0; font-size: 15px; margin-bottom: 20px; height: 45px; line-height: 1.4;}
 
         .play-btn {
             display: inline-block;
-            background: linear-gradient(90deg, #00ffcc, #00b300);
+            background: #00ffcc; /* Simple bright background */
             color: #000; text-decoration: none;
-            padding: 12px 30px; font-size: 20px; font-weight: 900;
-            border-radius: 30px; border: 2px solid #fff;
-            transition: 0.2s; box-shadow: 0 5px 15px rgba(0, 255, 204, 0.5);
+            padding: 10px 25px; font-size: 18px; font-weight: 900;
+            border-radius: 5px; /* Boxy look pairs better with monospace */
+            border: 1px solid #00ffcc;
+            transition: 0.2s ease-in-out; 
+            box-shadow: 0 3px 10px rgba(0, 255, 204, 0.3);
+            font-family: 'Courier New', monospace;
         }
-        .play-btn:hover { background: #fff; color: #000; box-shadow: 0 0 25px #fff; }
+        .play-btn:hover { background: transparent; color: #fff; box-shadow: 0 0 15px #00ffcc; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>🐍 SnakeZilla</h1>
-        <p class="subtitle">10 Epic Ways to Play the Classic Game!</p>
+        <div class="header-container">
+            <!-- IMP: Replace image_0.png with your actual raw image link if needed -->
+            <img src="image_0.png" alt="SnakeZilla Games Coiled Snake Logo" class="logo-img">
+            <div>
+                <!-- Emoji removed from H1 per branding discussion -->
+                <h1>SnakeZilla</h1>
+                <p class="subtitle">10 Epic Ways to Play the Classic Game!</p>
+            </div>
+        </div>
     </header>
 
     <div class="game-grid">
@@ -153,16 +198,17 @@
             <a href="dragon-snake.html" class="play-btn">PLAY NOW</a>
         </div>
     </div>
-<!-- SEO & AdSense Footer -->
-    <footer style="margin-top: 60px; padding: 25px; background: rgba(0, 0, 0, 0.5); border-top: 2px solid #00ffcc; font-family: sans-serif; font-size: 15px;">
-        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-bottom: 15px;">
-            <a href="about.html" style="color: #00ffcc; text-decoration: none; font-weight: bold;">About Us</a>
-            <a href="contact.html" style="color: #00ffcc; text-decoration: none; font-weight: bold;">Contact Us</a>
-            <a href="privacy.html" style="color: #00ffcc; text-decoration: none; font-weight: bold;">Privacy Policy</a>
-            <a href="terms.html" style="color: #00ffcc; text-decoration: none; font-weight: bold;">Terms of Service</a>
+
+    <!-- Updated Footer styled for AdSense compliance & theme cohesion -->
+    <footer style="margin-top: 60px; padding: 25px 20px; background: rgba(5, 5, 10, 0.9); border-top: 2px solid #5a5af0; font-family: 'Segoe UI', Tahoma, sans-serif; font-size: 14px;">
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; margin-bottom: 20px;">
+            <a href="about.html" style="color: #00ffcc; text-decoration: none; font-weight: bold; transition: 0.2s;">About Us</a>
+            <a href="contact.html" style="color: #00ffcc; text-decoration: none; font-weight: bold; transition: 0.2s;">Contact Us</a>
+            <a href="privacy.html" style="color: #00ffcc; text-decoration: none; font-weight: bold; transition: 0.2s;">Privacy Policy</a>
+            <a href="terms.html" style="color: #00ffcc; text-decoration: none; font-weight: bold; transition: 0.2s;">Terms of Service</a>
         </div>
-        <p style="color: #a4b0be; margin: 0; font-size: 13px;">&copy; 2026 SnakeZilla Games. All rights reserved.</p>
-        <p style="color: #747d8c; margin-top: 5px; font-size: 12px;">Play the best free online HTML5 snake games directly in your browser.</p>
+        <p style="color: #bdc3c7; margin: 0; font-size: 13px;">&copy; 2026 SnakeZilla Games. All rights reserved.</p>
+        <p style="color: #7f8c8d; margin-top: 5px; font-size: 12px; font-style: italic;">The definitive universe for free online HTML5 snake games.</p>
     </footer>
 </body>
 </html>
