@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dragon Boss Snake</title>
+    <style>
+        body { background: #1e0000; color: #fff; text-align: center; margin: 0; font-family: Impact, sans-serif; overflow: hidden; }
+        header { background: #4a0000; padding: 10px; border-bottom: 2px solid #ff3300; }
+        h2 { margin: 0; color: #ff9900; letter-spacing: 2px; }
+        canvas { background: #330000; border: 4px solid #ff3300; margin-top: 15px; border-radius: 5px; box-shadow: inset 0 0 20px #000; }
+        .controls { display: grid; grid-template-columns: 60px 60px 60px; justify-content: center; gap: 5px; margin-top: 10px; }
+        button { background: #ff3300; color: white; border: none; border-radius: 8px; font-size: 20px; padding: 12px; touch-action: manipulation; }
+        #scoreBoard { font-size: 18px; margin-top: 5px; color: #ffeb3b;}
+    </style>
+</head>
+<body>
+    <header><h2>🐉 Dragon Boss Fight</h2><div id="scoreBoard">Eat 10 Bugs to Win! | Score: 0/10</div></header>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div class="controls">
+        <button id="btnLeft" style="grid-column: 1; grid-row: 2;">⬅️</button>
+        <button id="btnUp" style="grid-column: 2; grid-row: 1;">⬆️</button>
+        <button id="btnDown" style="grid-column: 2; grid-row: 2;">⬇️</button>
+        <button id="btnRight" style="grid-column: 3; grid-row: 2;">➡️</button>
+    </div>
+    <script>
+        const canvas = document.getElementById("gameCanvas"); const ctx = canvas.getContext("2d");
+        let box = 20, score = 0, d = "RIGHT";
+        let snake = [{ x: 5 * box, y: 10 * box }];
+        let food = { x: 15*box, y: 10*box };
+        
+        // Boss Logic
+        let boss = { x: 10*box, y: 5*box, dirX: 1, dirY: 1, size: 30 };
+
+        document.addEventListener("keydown", e => {
+            if(e.keyCode == 37 && d != "RIGHT") d = "LEFT"; else if(e.keyCode == 38 && d != "DOWN") d = "UP";
+            else if(e.keyCode == 39 && d != "LEFT") d = "RIGHT"; else if(e.keyCode == 40 && d != "UP") d = "DOWN";
+        });
+        const bindBtn = (id, dir, opp) => { document.getElementById(id).addEventListener("touchstart", (e) => { e.preventDefault(); if(d != opp) d = dir; }); };
+        bindBtn("btnUp", "UP", "DOWN"); bindBtn("btnDown", "DOWN", "UP"); bindBtn("btnLeft", "LEFT", "RIGHT"); bindBtn("btnRight", "RIGHT", "LEFT");
+
+        function drawBug(x, y) {
+            const cx = x + box/2, cy = y + box/2;
+            ctx.fillStyle = "#00ffcc"; ctx.beginPath(); ctx.ellipse(cx, cy, 6, 8, 0, 0, Math.PI*2); ctx.fill(); 
+        }
+
+        function drawSnakePart(part, index) {
+            const isHead = index === 0; const cx = part.x + box/2, cy = part.y + box/2;
+            ctx.fillStyle = isHead ? "#f39c12" : "#f1c40f"; // Golden Knight Snake
+            ctx.beginPath(); ctx.arc(cx, cy, box/2.2, 0, Math.PI*2); ctx.fill(); 
+        }
+
+        function drawBoss() {
+            ctx.fillStyle = "#c0392b"; ctx.shadowBlur = 15; ctx.shadowColor = "#e74c3c";
+            ctx.beginPath(); ctx.arc(boss.x + boss.size/2, boss.y + boss.size/2, boss.size/2, 0, Math.PI*2); ctx.fill();
+            ctx.shadowBlur = 0;
+            // Angry Eyes
+            ctx.fillStyle = "yellow";
+            ctx.beginPath(); ctx.moveTo(boss.x+5, boss.y+5); ctx.lineTo(boss.x+12, boss.y+10); ctx.lineTo(boss.x+5, boss.y+15); ctx.fill();
+            ctx.beginPath(); ctx.moveTo(boss.x+25, boss.y+5); ctx.lineTo(boss.x+18, boss.y+10); ctx.lineTo(boss.x+25, boss.y+15); ctx.fill();
+        }
+
+        let frameCount = 0;
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            drawBug(food.x, food.y);
+            drawBoss();
+            for (let i = 0; i < snake.length; i++) drawSnakePart(snake[i], i);
+
+            // Boss Movement (Moves slower than snake)
+            frameCount++;
+            if(frameCount % 2 === 0) {
+                boss.x += boss.dirX * 10; boss.y += boss.dirY * 10;
+                if(boss.x <= 0 || boss.x >= canvas.width - boss.size) boss.dirX *= -1;
+                if(boss.y <= 0 || boss.y >= canvas.height - boss.size) boss.dirY *= -1;
+            }
+
+            let snakeX = snake[0].x, snakeY = snake[0].y;
+            if (d == "LEFT") snakeX -= box; if (d == "UP") snakeY -= box;
+            if (d == "RIGHT") snakeX += box; if (d == "DOWN") snakeY += box;
+
+            // Check Boss Collision
+            if(snakeX > boss.x - box && snakeX < boss.x + boss.size && snakeY > boss.y - box && snakeY < boss.y + boss.size) {
+                alert("Eaten by the Dragon! Game Over."); location.reload(); return;
+            }
+
+            if (snakeX == food.x && snakeY == food.y) {
+                score++; document.getElementById("scoreBoard").innerText = `Eat 10 Bugs to Win! | Score: ${score}/10`;
+                if(score >= 10) { alert("YOU DEFEATED THE DRAGON! YOU WIN!"); location.reload(); return; }
+                food = { x: Math.floor(Math.random()*19+1)*box, y: Math.floor(Math.random()*19+1)*box };
+            } else snake.pop();
+
+            let newHead = { x: snakeX, y: snakeY };
+            if(snakeX<0 || snakeY<0 || snakeX>=canvas.width || snakeY>=canvas.height) { alert("Game Over!"); location.reload(); return;}
+            snake.unshift(newHead);
+        }
+        setInterval(draw, 120);
+    </script>
+</body>
+</html>
