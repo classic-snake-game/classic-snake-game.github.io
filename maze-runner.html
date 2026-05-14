@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Maze Runner Snake</title>
+    <style>
+        body { background: #1a1a2e; color: #fff; text-align: center; margin: 0; font-family: Tahoma, sans-serif; overflow: hidden; }
+        header { background: #16213e; padding: 10px; border-bottom: 2px solid #e94560; }
+        h2 { margin: 0; color: #e94560; text-transform: uppercase; letter-spacing: 2px;}
+        canvas { background: #0f3460; border: 4px solid #535c68; margin-top: 15px; border-radius: 5px; box-shadow: 0 0 20px rgba(0,0,0,0.5);}
+        .controls { display: grid; grid-template-columns: 60px 60px 60px; justify-content: center; gap: 5px; margin-top: 10px; }
+        button { background: #e94560; color: white; border: none; border-radius: 8px; font-size: 20px; padding: 12px; touch-action: manipulation; font-weight: bold;}
+        #scoreBoard { font-size: 18px; color: #fff; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <header><h2>🧱 Maze Runner</h2><div id="scoreBoard">Score: 0</div></header>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div class="controls">
+        <button id="btnLeft" style="grid-column: 1; grid-row: 2;">⬅️</button>
+        <button id="btnUp" style="grid-column: 2; grid-row: 1;">⬆️</button>
+        <button id="btnDown" style="grid-column: 2; grid-row: 2;">⬇️</button>
+        <button id="btnRight" style="grid-column: 3; grid-row: 2;">➡️</button>
+    </div>
+    <script>
+        const canvas = document.getElementById("gameCanvas"); const ctx = canvas.getContext("2d");
+        let box = 20, score = 0, d = "RIGHT";
+        let snake = [{ x: 2 * box, y: 2 * box }];
+        
+        let walls = [
+            {x: 5*box, y: 5*box}, {x: 6*box, y: 5*box}, {x: 7*box, y: 5*box}, {x: 8*box, y: 5*box},
+            {x: 15*box, y: 15*box}, {x: 15*box, y: 14*box}, {x: 15*box, y: 13*box}, {x: 15*box, y: 12*box},
+            {x: 5*box, y: 15*box}, {x: 6*box, y: 15*box}, {x: 7*box, y: 15*box},
+            {x: 15*box, y: 5*box}, {x: 14*box, y: 5*box}, {x: 13*box, y: 5*box}
+        ];
+
+        function getFood() {
+            let f, valid = false;
+            while(!valid) {
+                f = { x: Math.floor(Math.random()*19+1)*box, y: Math.floor(Math.random()*19+1)*box };
+                valid = true;
+                for(let w of walls) if(f.x == w.x && f.y == w.y) valid = false;
+                for(let s of snake) if(f.x == s.x && f.y == s.y) valid = false;
+            } return f;
+        }
+        let food = getFood();
+
+        document.addEventListener("keydown", e => {
+            if(e.keyCode == 37 && d != "RIGHT") d = "LEFT"; else if(e.keyCode == 38 && d != "DOWN") d = "UP";
+            else if(e.keyCode == 39 && d != "LEFT") d = "RIGHT"; else if(e.keyCode == 40 && d != "UP") d = "DOWN";
+        });
+        const bindBtn = (id, dir, opp) => { document.getElementById(id).addEventListener("touchstart", (e) => { e.preventDefault(); if(d != opp) d = dir; }); };
+        bindBtn("btnUp", "UP", "DOWN"); bindBtn("btnDown", "DOWN", "UP"); bindBtn("btnLeft", "LEFT", "RIGHT"); bindBtn("btnRight", "RIGHT", "LEFT");
+
+        function drawBug(x, y) {
+            const cx = x + box/2, cy = y + box/2;
+            ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.beginPath();
+            ctx.moveTo(cx-5, cy-6); ctx.lineTo(cx-12, cy-10); ctx.moveTo(cx-6, cy); ctx.lineTo(cx-14, cy); ctx.moveTo(cx-5, cy+6); ctx.lineTo(cx-12, cy+10);
+            ctx.moveTo(cx+5, cy-6); ctx.lineTo(cx+12, cy-10); ctx.moveTo(cx+6, cy); ctx.lineTo(cx+14, cy); ctx.moveTo(cx+5, cy+6); ctx.lineTo(cx+12, cy+10); ctx.stroke();
+            ctx.fillStyle = "#f1c40f"; ctx.beginPath(); ctx.ellipse(cx, cy+2, 6, 8, 0, 0, Math.PI*2); ctx.fill(); 
+            ctx.fillStyle = "#2f3542"; ctx.beginPath(); ctx.arc(cx, cy-5, 4, 0, Math.PI*2); ctx.fill();
+        }
+
+        function drawSnakePart(part, index) {
+            const isHead = index === 0; const cx = part.x + box/2, cy = part.y + box/2;
+            ctx.shadowBlur = isHead ? 8 : 0; ctx.shadowColor = "#2ecc71";
+            ctx.fillStyle = isHead ? "#27ae60" : (index % 2 === 0 ? "#2ecc71" : "#2ecc71"); 
+            ctx.beginPath(); ctx.arc(cx, cy, box/2.2, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
+            if(isHead) {
+                ctx.fillStyle = "white"; let e1x, e1y, e2x, e2y, off=4;
+                if(d==="RIGHT"){e1x=cx+off; e1y=cy-off; e2x=cx+off; e2y=cy+off;} else if(d==="LEFT"){e1x=cx-off; e1y=cy-off; e2x=cx-off; e2y=cy+off;}
+                else if(d==="UP"){e1x=cx-off; e1y=cy-off; e2x=cx+off; e2y=cy-off;} else if(d==="DOWN"){e1x=cx-off; e1y=cy+off; e2x=cx+off; e2y=cy+off;}
+                ctx.beginPath(); ctx.arc(e1x, e1y, 3, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(e2x, e2y, 3, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "black";
+                ctx.beginPath(); ctx.arc(e1x+(d==="RIGHT"?1:d==="LEFT"?-1:0), e1y+(d==="DOWN"?1:d==="UP"?-1:0), 1.5, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(e2x+(d==="RIGHT"?1:d==="LEFT"?-1:0), e2y+(d==="DOWN"?1:d==="UP"?-1:0), 1.5, 0, Math.PI*2); ctx.fill();
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw Walls
+            ctx.fillStyle = "#7f8c8d"; ctx.shadowBlur = 5; ctx.shadowColor = "#000";
+            for(let w of walls) {
+                ctx.fillRect(w.x, w.y, box, box);
+                ctx.strokeStyle = "#95a5a6"; ctx.lineWidth = 1; ctx.strokeRect(w.x, w.y, box, box);
+            }
+            ctx.shadowBlur = 0;
+
+            drawBug(food.x, food.y);
+            for (let i = 0; i < snake.length; i++) drawSnakePart(snake[i], i);
+
+            let snakeX = snake[0].x, snakeY = snake[0].y;
+            if (d == "LEFT") snakeX -= box; if (d == "UP") snakeY -= box;
+            if (d == "RIGHT") snakeX += box; if (d == "DOWN") snakeY += box;
+
+            if (snakeX == food.x && snakeY == food.y) {
+                score++; document.getElementById("scoreBoard").innerText = "Score: " + score;
+                food = getFood();
+            } else snake.pop();
+
+            let newHead = { x: snakeX, y: snakeY };
+            let hitWall = false; for(let w of walls) if(newHead.x == w.x && newHead.y == w.y) hitWall = true;
+
+            if(hitWall || snakeX<0 || snakeY<0 || snakeX>=canvas.width || snakeY>=canvas.height || checkCol(newHead, snake)) { 
+                alert("Crashed! Score: "+score); location.reload(); return;
+            }
+            snake.unshift(newHead);
+        }
+        function checkCol(head, array) { for(let i=0; i<array.length; i++) if(head.x == array[i].x && head.y == array[i].y) return true; return false; }
+        setInterval(draw, 130);
+    </script>
+</body>
+</html>
