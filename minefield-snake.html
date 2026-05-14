@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Minefield Snake</title>
+    <style>
+        body { background: #2c3e50; color: #fff; text-align: center; margin: 0; font-family: 'Arial', sans-serif; overflow: hidden; }
+        header { background: #e74c3c; padding: 10px; border-bottom: 4px solid #c0392b; }
+        h2 { margin: 0; color: #fff; text-transform: uppercase; text-shadow: 2px 2px 0 #000; }
+        canvas { background: #34495e; border: 4px solid #2ecc71; margin-top: 15px; border-radius: 5px; }
+        .controls { display: grid; grid-template-columns: 60px 60px 60px; justify-content: center; gap: 5px; margin-top: 10px; }
+        button { background: #e74c3c; color: white; border: none; border-radius: 8px; font-size: 20px; padding: 12px; touch-action: manipulation; font-weight: bold;}
+        #scoreBoard { font-size: 18px; font-weight: bold; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <header><h2>💣 Minefield</h2><div id="scoreBoard">Score: 0 | Mines: 0</div></header>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div class="controls">
+        <button id="btnLeft" style="grid-column: 1; grid-row: 2;">⬅️</button>
+        <button id="btnUp" style="grid-column: 2; grid-row: 1;">⬆️</button>
+        <button id="btnDown" style="grid-column: 2; grid-row: 2;">⬇️</button>
+        <button id="btnRight" style="grid-column: 3; grid-row: 2;">➡️</button>
+    </div>
+    <script>
+        const canvas = document.getElementById("gameCanvas"); const ctx = canvas.getContext("2d");
+        let box = 20, score = 0, d = "RIGHT";
+        let snake = [{ x: 5 * box, y: 10 * box }];
+        let mines = [];
+        
+        function getPos() { return { x: Math.floor(Math.random()*19+1)*box, y: Math.floor(Math.random()*19+1)*box }; }
+        let food = getPos();
+
+        document.addEventListener("keydown", e => {
+            if(e.keyCode == 37 && d != "RIGHT") d = "LEFT"; else if(e.keyCode == 38 && d != "DOWN") d = "UP";
+            else if(e.keyCode == 39 && d != "LEFT") d = "RIGHT"; else if(e.keyCode == 40 && d != "UP") d = "DOWN";
+        });
+        const bindBtn = (id, dir, opp) => { document.getElementById(id).addEventListener("touchstart", (e) => { e.preventDefault(); if(d != opp) d = dir; }); };
+        bindBtn("btnUp", "UP", "DOWN"); bindBtn("btnDown", "DOWN", "UP"); bindBtn("btnLeft", "LEFT", "RIGHT"); bindBtn("btnRight", "RIGHT", "LEFT");
+
+        function drawBug(x, y) {
+            const cx = x + box/2, cy = y + box/2;
+            ctx.fillStyle = "#f1c40f"; ctx.beginPath(); ctx.ellipse(cx, cy, 6, 8, 0, 0, Math.PI*2); ctx.fill(); 
+            ctx.fillStyle = "#2f3542"; ctx.beginPath(); ctx.arc(cx, cy-5, 4, 0, Math.PI*2); ctx.fill();
+        }
+
+        function drawMine(x, y) {
+            const cx = x + box/2, cy = y + box/2;
+            ctx.fillStyle = "#000"; ctx.beginPath(); ctx.arc(cx, cy, 7, 0, Math.PI*2); ctx.fill(); // Black bomb
+            ctx.fillStyle = "red"; ctx.beginPath(); ctx.arc(cx, cy, 2, 0, Math.PI*2); ctx.fill(); // Red blinking dot
+            ctx.strokeStyle = "#000"; ctx.lineWidth = 2; // Spikes
+            ctx.beginPath(); ctx.moveTo(cx-10, cy); ctx.lineTo(cx+10, cy); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(cx, cy-10); ctx.lineTo(cx, cy+10); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(cx-7, cy-7); ctx.lineTo(cx+7, cy+7); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(cx-7, cy+7); ctx.lineTo(cx+7, cy-7); ctx.stroke();
+        }
+
+        function drawSnakePart(part, index) {
+            const isHead = index === 0; const cx = part.x + box/2, cy = part.y + box/2;
+            ctx.fillStyle = isHead ? "#27ae60" : "#2ecc71"; // Army Green
+            ctx.beginPath(); ctx.arc(cx, cy, box/2.2, 0, Math.PI*2); ctx.fill(); 
+            if(isHead) {
+                ctx.fillStyle = "white"; let off=4;
+                ctx.beginPath(); ctx.arc(cx-off, cy-off, 3, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(cx+off, cy-off, 3, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "black";
+                ctx.beginPath(); ctx.arc(cx-off, cy-off, 1.5, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(cx+off, cy-off, 1.5, 0, Math.PI*2); ctx.fill();
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBug(food.x, food.y);
+            for(let m of mines) drawMine(m.x, m.y);
+            for (let i = 0; i < snake.length; i++) drawSnakePart(snake[i], i);
+
+            let snakeX = snake[0].x, snakeY = snake[0].y;
+            if (d == "LEFT") snakeX -= box; if (d == "UP") snakeY -= box;
+            if (d == "RIGHT") snakeX += box; if (d == "DOWN") snakeY += box;
+
+            if (snakeX == food.x && snakeY == food.y) {
+                score++; food = getPos();
+                mines.push(getPos()); // Add a new bomb every time you eat!
+                document.getElementById("scoreBoard").innerText = `Score: ${score} | Mines: ${mines.length}`;
+            } else snake.pop();
+
+            let newHead = { x: snakeX, y: snakeY };
+            
+            // Check bomb collision
+            for(let m of mines) { if(snakeX == m.x && snakeY == m.y) { alert("BOOM! Hit a mine. Score: "+score); location.reload(); return; } }
+
+            if(snakeX<0 || snakeY<0 || snakeX>=canvas.width || snakeY>=canvas.height) { alert("Crashed! Score: "+score); location.reload(); return;}
+            for(let i=0; i<snake.length; i++){ if(snakeX == snake[i].x && snakeY == snake[i].y) { alert("Game Over!"); location.reload(); return;}}
+            snake.unshift(newHead);
+        }
+        setInterval(draw, 130);
+    </script>
+</body>
+</html>
