@@ -12,7 +12,7 @@
             text-align: center;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Mobile par scroll rokne ke liye */
+            overflow: hidden;
         }
         header {
             background: linear-gradient(90deg, #ff4757, #ff6b81);
@@ -24,18 +24,60 @@
         .score-board {
             display: flex;
             justify-content: center;
-            gap: 30px;
+            gap: 20px;
             margin: 15px 0;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             color: #2ed573;
+            flex-wrap: wrap;
         }
+        .level-text { color: #feca57; }
 
         .game-container {
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative; /* Added for overlay */
         }
+
+        /* Screen overlays for Start and Game Over */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            max-width: 95vw;
+            height: 400px;
+            background: rgba(15, 15, 26, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+            z-index: 10;
+        }
+
+        .overlay h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #ff4757;
+            text-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
+        }
+
+        .action-btn {
+            background: #2ed573;
+            color: #0f0f1a;
+            border: none;
+            padding: 12px 30px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(46, 213, 115, 0.4);
+            transition: transform 0.1s;
+        }
+        .action-btn:active { transform: scale(0.95); }
 
         canvas {
             background-color: #1e1e2f;
@@ -47,7 +89,7 @@
 
         /* Mobile Controls Styling */
         .controls {
-            margin-top: 20px;
+            margin-top: 15px;
             display: grid;
             grid-template-columns: 60px 60px 60px;
             grid-template-rows: 60px 60px;
@@ -84,6 +126,7 @@
     </header>
 
     <div class="score-board">
+        <div id="levelDisplay" class="level-text">Level: 1</div>
         <div id="scoreDisplay">Score: 0</div>
         <div id="highScoreDisplay">High Score: 0</div>
     </div>
@@ -91,6 +134,19 @@
     <div class="game-container">
         <canvas id="gameCanvas" width="400" height="400"></canvas>
         
+        <!-- Start Screen Overlay -->
+        <div id="startScreen" class="overlay">
+            <h2>Ready to Play?</h2>
+            <button class="action-btn" onclick="startGame()">▶️ Play Now</button>
+        </div>
+
+        <!-- Game Over Overlay -->
+        <div id="gameOverScreen" class="overlay" style="display: none;">
+            <h2>Game Over! 💥</h2>
+            <p id="finalScoreText" style="font-size: 20px; margin-bottom: 20px;">Score: 0</p>
+            <button class="action-btn" onclick="startGame()">🔄 Replay</button>
+        </div>
+
         <!-- Mobile D-PAD -->
         <div class="controls">
             <button id="btnUp">⬆️</button>
@@ -104,7 +160,7 @@
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
 
-        // --- AUDIO SYSTEM (Web Audio API) ---
+        // --- AUDIO SYSTEM ---
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx;
 
@@ -136,22 +192,31 @@
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.5);
+            } else if (type === 'levelUp') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
             }
         }
 
-        // --- GAME LOGIC ---
+        // --- GAME VARIABLES ---
         let box = 20;
         let snake = [];
-        snake[0] = { x: 9 * box, y: 10 * box }; // Starting position
-        
-        let food = generateFood();
+        let food;
         let score = 0;
-        let highScore = localStorage.getItem("snakeHighScore") || 0;
-        document.getElementById("highScoreDisplay").innerText = "High Score: " + highScore;
-        
-        let d = "RIGHT"; // Default direction
+        let level = 1;
+        let speed = 200; // Starting speed (slow)
+        let d = "RIGHT"; 
         let gameLoop;
-        let speed = 120; // Initial speed
+        let isGameRunning = false;
+        let highScore = localStorage.getItem("snakeHighScore") || 0;
+        
+        document.getElementById("highScoreDisplay").innerText = "High Score: " + highScore;
 
         function generateFood() {
             return {
@@ -160,21 +225,20 @@
             };
         }
 
-        // Controls (Keyboard)
+        // --- CONTROLS ---
         document.addEventListener("keydown", (e) => {
-            initAudio(); // Initialize audio on first user interaction
+            if(!isGameRunning) return;
             if (e.keyCode == 37 && d != "RIGHT") d = "LEFT";
             else if (e.keyCode == 38 && d != "DOWN") d = "UP";
             else if (e.keyCode == 39 && d != "LEFT") d = "RIGHT";
             else if (e.keyCode == 40 && d != "UP") d = "DOWN";
         });
 
-        // Controls (Mobile Buttons)
         const bindButton = (id, newDir, oppDir) => {
             const btn = document.getElementById(id);
             const handler = (e) => {
-                e.preventDefault(); // Stop double-firing on mobile
-                initAudio();
+                e.preventDefault(); 
+                if(!isGameRunning) return;
                 if (d != oppDir) d = newDir;
             };
             btn.addEventListener("touchstart", handler);
@@ -187,32 +251,26 @@
         bindButton("btnRight", "RIGHT", "LEFT");
 
         // --- DRAWING FUNCTIONS ---
-
         function drawBug(x, y) {
             const centerX = x + box / 2;
             const centerY = y + box / 2;
             
-            // Draw 6 Legs
             ctx.strokeStyle = "#ffffff";
             ctx.lineWidth = 2;
             ctx.beginPath();
-            // Left legs
             ctx.moveTo(centerX - 5, centerY - 6); ctx.lineTo(centerX - 12, centerY - 10);
             ctx.moveTo(centerX - 6, centerY); ctx.lineTo(centerX - 14, centerY);
             ctx.moveTo(centerX - 5, centerY + 6); ctx.lineTo(centerX - 12, centerY + 10);
-            // Right legs
             ctx.moveTo(centerX + 5, centerY - 6); ctx.lineTo(centerX + 12, centerY - 10);
             ctx.moveTo(centerX + 6, centerY); ctx.lineTo(centerX + 14, centerY);
             ctx.moveTo(centerX + 5, centerY + 6); ctx.lineTo(centerX + 12, centerY + 10);
             ctx.stroke();
 
-            // Draw Body (Red)
             ctx.fillStyle = "#ff4757";
             ctx.beginPath();
             ctx.ellipse(centerX, centerY + 2, 6, 8, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // Draw Head (Black)
             ctx.fillStyle = "#2f3542";
             ctx.beginPath();
             ctx.arc(centerX, centerY - 5, 4, 0, Math.PI * 2);
@@ -224,54 +282,41 @@
             const centerX = part.x + box / 2;
             const centerY = part.y + box / 2;
 
-            // Body shadow/glow
             ctx.shadowBlur = isHead ? 10 : 5;
             ctx.shadowColor = "#2ed573";
-            
-            // Color logic: Head is dark green, body alternates light green
             ctx.fillStyle = isHead ? "#10ac84" : (index % 2 === 0 ? "#1dd1a1" : "#2ed573");
             
             ctx.beginPath();
             ctx.arc(centerX, centerY, box / 2.2, 0, Math.PI * 2);
             ctx.fill();
-            
-            ctx.shadowBlur = 0; // Reset shadow for eyes
+            ctx.shadowBlur = 0; 
 
-            // Draw Eyes on Head based on direction
             if (isHead) {
                 ctx.fillStyle = "white";
-                let eye1X, eye1Y, eye2X, eye2Y;
-                let offset = 4;
-
+                let eye1X, eye1Y, eye2X, eye2Y, offset = 4;
                 if (d === "RIGHT") { eye1X = centerX+offset; eye1Y = centerY-offset; eye2X = centerX+offset; eye2Y = centerY+offset; }
                 else if (d === "LEFT") { eye1X = centerX-offset; eye1Y = centerY-offset; eye2X = centerX-offset; eye2Y = centerY+offset; }
                 else if (d === "UP") { eye1X = centerX-offset; eye1Y = centerY-offset; eye2X = centerX+offset; eye2Y = centerY-offset; }
                 else if (d === "DOWN") { eye1X = centerX-offset; eye1Y = centerY+offset; eye2X = centerX+offset; eye2Y = centerY+offset; }
 
-                // White part of eye
                 ctx.beginPath(); ctx.arc(eye1X, eye1Y, 3, 0, Math.PI * 2); ctx.fill();
                 ctx.beginPath(); ctx.arc(eye2X, eye2Y, 3, 0, Math.PI * 2); ctx.fill();
 
-                // Black pupil
                 ctx.fillStyle = "black";
                 ctx.beginPath(); ctx.arc(eye1X + (d==="RIGHT"?1:d==="LEFT"?-1:0), eye1Y + (d==="DOWN"?1:d==="UP"?-1:0), 1.5, 0, Math.PI * 2); ctx.fill();
                 ctx.beginPath(); ctx.arc(eye2X + (d==="RIGHT"?1:d==="LEFT"?-1:0), eye2Y + (d==="DOWN"?1:d==="UP"?-1:0), 1.5, 0, Math.PI * 2); ctx.fill();
             }
         }
 
+        // --- MAIN GAME LOOP ---
         function draw() {
-            // Clear screen
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw Bug (Food)
             drawBug(food.x, food.y);
 
-            // Draw Snake
             for (let i = 0; i < snake.length; i++) {
                 drawSnakePart(snake[i], i);
             }
 
-            // Move Snake Head
             let snakeX = snake[0].x;
             let snakeY = snake[0].y;
 
@@ -280,42 +325,39 @@
             if (d == "RIGHT") snakeX += box;
             if (d == "DOWN") snakeY += box;
 
-            // Check if food is eaten
+            // Eat Food Logic
             if (snakeX == food.x && snakeY == food.y) {
                 score++;
-                document.getElementById("scoreDisplay").innerText = "Score: " + score;
-                playSound('eat'); // Play eat sound
-                
+                playSound('eat');
                 food = generateFood();
                 
-                // Increase speed slightly
-                if(speed > 50) speed -= 2;
-                clearInterval(gameLoop);
-                gameLoop = setInterval(draw, speed);
+                // Level Up Logic (Every 5 points)
+                if (score % 5 === 0) {
+                    level++;
+                    playSound('levelUp');
+                    if(speed > 60) speed -= 15; // Increase speed
+                    
+                    document.getElementById("levelDisplay").innerText = "Level: " + level;
+                    
+                    // Reset interval with new speed
+                    clearInterval(gameLoop);
+                    gameLoop = setInterval(draw, speed);
+                }
+                
+                document.getElementById("scoreDisplay").innerText = "Score: " + score;
             } else {
-                snake.pop(); // Remove tail
+                snake.pop();
             }
 
             let newHead = { x: snakeX, y: snakeY };
 
-            // Game Over Collision logic
+            // Game Over Logic
             if (snakeX < 0 || snakeY < 0 || snakeX >= canvas.width || snakeY >= canvas.height || collision(newHead, snake)) {
-                clearInterval(gameLoop);
-                playSound('die'); // Play game over sound
-                
-                if(score > highScore) {
-                    highScore = score;
-                    localStorage.setItem("snakeHighScore", highScore);
-                }
-                
-                setTimeout(() => {
-                    alert("Game Over! 💥 Your Score: " + score + "\nPress OK to restart.");
-                    document.location.reload();
-                }, 300);
+                endGame();
                 return;
             }
 
-            snake.unshift(newHead); // Add new head
+            snake.unshift(newHead);
         }
 
         function collision(head, array) {
@@ -325,8 +367,47 @@
             return false;
         }
 
-        // Start Game Loop
-        gameLoop = setInterval(draw, speed);
+        // --- START & END GAME FUNCTIONS ---
+        function startGame() {
+            initAudio();
+            document.getElementById("startScreen").style.display = "none";
+            document.getElementById("gameOverScreen").style.display = "none";
+            
+            // Reset Variables
+            snake = [];
+            snake[0] = { x: 9 * box, y: 10 * box };
+            score = 0;
+            level = 1;
+            speed = 200; // Reset to slow speed
+            d = "RIGHT";
+            isGameRunning = true;
+            food = generateFood();
+            
+            document.getElementById("scoreDisplay").innerText = "Score: " + score;
+            document.getElementById("levelDisplay").innerText = "Level: " + level;
+            
+            if(gameLoop) clearInterval(gameLoop);
+            gameLoop = setInterval(draw, speed);
+        }
+
+        function endGame() {
+            isGameRunning = false;
+            clearInterval(gameLoop);
+            playSound('die');
+            
+            if(score > highScore) {
+                highScore = score;
+                localStorage.setItem("snakeHighScore", highScore);
+                document.getElementById("highScoreDisplay").innerText = "High Score: " + highScore;
+            }
+            
+            document.getElementById("finalScoreText").innerText = "Final Score: " + score + " (Level " + level + ")";
+            document.getElementById("gameOverScreen").style.display = "flex";
+        }
+
+        // Initial draw on canvas before play is clicked
+        ctx.fillStyle = "#1e1e2f";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
     </script>
 </body>
 </html>
