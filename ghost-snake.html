@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ghost Mode Snake</title>
+    <style>
+        body { background: #050510; color: #fff; text-align: center; margin: 0; font-family: 'Courier New', Courier, monospace; overflow: hidden; }
+        header { background: #1a1a3a; padding: 10px; border-bottom: 2px solid #5a5af0; box-shadow: 0 0 15px #5a5af0; }
+        h2 { margin: 0; color: #8a8aff; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 0 10px #5a5af0; }
+        canvas { background: #000; border: 2px dashed #3a3a8a; margin-top: 15px; box-shadow: 0 0 20px rgba(90, 90, 240, 0.3); }
+        .controls { display: grid; grid-template-columns: 60px 60px 60px; justify-content: center; gap: 8px; margin-top: 15px; }
+        button { background: #1a1a3a; color: #8a8aff; border: 1px solid #5a5af0; border-radius: 5px; font-size: 24px; padding: 10px; touch-action: manipulation; }
+        #scoreBoard { font-size: 18px; color: #fff; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <header><h2>👻 Ghost Mode</h2><div id="scoreBoard">Score: 0</div></header>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div class="controls">
+        <button id="btnLeft" style="grid-column: 1; grid-row: 2;">⬅️</button>
+        <button id="btnUp" style="grid-column: 2; grid-row: 1;">⬆️</button>
+        <button id="btnDown" style="grid-column: 2; grid-row: 2;">⬇️</button>
+        <button id="btnRight" style="grid-column: 3; grid-row: 2;">➡️</button>
+    </div>
+    <script>
+        const canvas = document.getElementById("gameCanvas"); const ctx = canvas.getContext("2d");
+        let box = 20, score = 0, d = "RIGHT";
+        let snake = [{ x: 9 * box, y: 10 * box }];
+        let food = { x: Math.floor(Math.random()*19+1)*box, y: Math.floor(Math.random()*19+1)*box };
+
+        document.addEventListener("keydown", e => {
+            if(e.keyCode == 37 && d != "RIGHT") d = "LEFT"; else if(e.keyCode == 38 && d != "DOWN") d = "UP";
+            else if(e.keyCode == 39 && d != "LEFT") d = "RIGHT"; else if(e.keyCode == 40 && d != "UP") d = "DOWN";
+        });
+        const bindBtn = (id, dir, opp) => { document.getElementById(id).addEventListener("touchstart", (e) => { e.preventDefault(); if(d != opp) d = dir; }); };
+        bindBtn("btnUp", "UP", "DOWN"); bindBtn("btnDown", "DOWN", "UP"); bindBtn("btnLeft", "LEFT", "RIGHT"); bindBtn("btnRight", "RIGHT", "LEFT");
+
+        function drawBug(x, y) {
+            const cx = x + box/2, cy = y + box/2;
+            ctx.shadowBlur = 15; ctx.shadowColor = "#8a8aff";
+            ctx.fillStyle = "#8a8aff"; ctx.beginPath(); ctx.ellipse(cx, cy+2, 6, 8, 0, 0, Math.PI*2); ctx.fill(); 
+            ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(cx, cy-4, 4, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
+        }
+
+        function drawSnakePart(part, index) {
+            const isHead = index === 0; const cx = part.x + box/2, cy = part.y + box/2;
+            
+            // Ghost Fading Logic (Pichhe ki body transparent hoti jayegi)
+            let alpha = Math.max(0.1, 1 - (index / snake.length)); 
+            ctx.globalAlpha = alpha;
+            
+            ctx.shadowBlur = isHead ? 15 : 0; ctx.shadowColor = "#fff";
+            ctx.fillStyle = isHead ? "#ffffff" : "#bdc3c7"; 
+            ctx.beginPath(); ctx.arc(cx, cy, box/2.2, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
+
+            if(isHead) {
+                ctx.fillStyle = "#8a8aff"; let e1x, e1y, e2x, e2y, off=4;
+                if(d==="RIGHT"){e1x=cx+off; e1y=cy-off; e2x=cx+off; e2y=cy+off;} else if(d==="LEFT"){e1x=cx-off; e1y=cy-off; e2x=cx-off; e2y=cy+off;}
+                else if(d==="UP"){e1x=cx-off; e1y=cy-off; e2x=cx+off; e2y=cy-off;} else if(d==="DOWN"){e1x=cx-off; e1y=cy+off; e2x=cx+off; e2y=cy+off;}
+                ctx.beginPath(); ctx.arc(e1x, e1y, 3, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(e2x, e2y, 3, 0, Math.PI*2); ctx.fill();
+            }
+            ctx.globalAlpha = 1.0; // Reset opacity
+        }
+
+        function draw() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.2)"; ctx.fillRect(0, 0, canvas.width, canvas.height); // Ghostly trail background
+            drawBug(food.x, food.y);
+            for (let i = 0; i < snake.length; i++) drawSnakePart(snake[i], i);
+
+            let snakeX = snake[0].x, snakeY = snake[0].y;
+            if (d == "LEFT") snakeX -= box; if (d == "UP") snakeY -= box;
+            if (d == "RIGHT") snakeX += box; if (d == "DOWN") snakeY += box;
+
+            if (snakeX == food.x && snakeY == food.y) {
+                score++; document.getElementById("scoreBoard").innerText = "Score: " + score;
+                food = { x: Math.floor(Math.random()*19+1)*box, y: Math.floor(Math.random()*19+1)*box };
+            } else snake.pop();
+
+            let newHead = { x: snakeX, y: snakeY };
+            if(snakeX<0 || snakeY<0 || snakeX>=canvas.width || snakeY>=canvas.height) { alert("Busted! Score: "+score); location.reload(); return;}
+            for(let i=0; i<snake.length; i++){ if(snakeX == snake[i].x && snakeY == snake[i].y) { alert("You hit your own ghost! Score: "+score); location.reload(); return;}}
+            snake.unshift(newHead);
+        }
+        setInterval(draw, 130);
+    </script>
+</body>
+</html>
