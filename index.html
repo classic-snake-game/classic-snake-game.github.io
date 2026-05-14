@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnakeZilla - The Ultimate Snake Universe</title>
+    <style>
+        body {
+            background: radial-gradient(circle, #2b1055, #000000);
+            color: #fff;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            margin: 0; padding: 0; text-align: center;
+        }
+        header {
+            background: linear-gradient(45deg, #ff00cc, #3333ff);
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(255, 0, 204, 0.5);
+            border-bottom: 5px solid #00ffcc;
+        }
+        h1 {
+            font-size: 45px; margin: 0; text-transform: uppercase;
+            text-shadow: 0 0 15px #fff, 0 0 25px #ff00cc;
+            animation: pulse 2s infinite;
+        }
+        p.subtitle { font-size: 20px; color: #00ffcc; font-weight: bold; }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .game-grid {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; padding: 40px 20px;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 3px solid #00ffcc; border-radius: 20px;
+            width: 260px; padding: 25px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+        }
+        .game-card:hover {
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.8);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .game-icon { font-size: 70px; margin-bottom: 15px; }
+        .game-title { font-size: 24px; color: #ffeb3b; margin: 10px 0; text-shadow: 2px 2px 4px #000; }
+        .game-desc { color: #fff; font-size: 15px; margin-bottom: 20px; height: 45px; }
+
+        .play-btn {
+            display: inline-block;
+            background: linear-gradient(90deg, #00ffcc, #00b300);
+            color: #000; text-decoration: none;
+            padding: 12px 30px; font-size: 20px; font-weight: 900;
+            border-radius: 30px; border: 2px solid #fff;
+            transition: 0.2s; box-shadow: 0 5px 15px rgba(0, 255, 204, 0.5);
+        }
+        .play-btn:hover { background: #fff; color: #000; box-shadow: 0 0 25px #fff; }
+        
+        .locked { opacity: 0.5; filter: grayscale(100%); pointer-events: none; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🐍 SnakeZilla</h1>
+        <p class="subtitle">10 Epic Ways to Play the Classic Game!</p>
+    </header>
+
+    <div class="game-grid">
+        <!-- Game 1 -->
+        <div class="game-card">
+            <div class="game-icon">🐛</div>
+            <h2 class="game-title">Modern Snake</h2>
+            <p class="game-desc">The classic game you love, upgraded!</p>
+            <a href="snake.html" class="play-btn">PLAY NOW</a>
+        </div>
+
+        <!-- Game 2 -->
+        <div class="game-card">
+            <div class="game-icon">🌌</div>
+            <h2 class="game-title">Portal Snake</h2>
+            <p class="game-desc">No walls! Go through the screen like magic.</p>
+            <a href="portal-snake.html" class="play-btn">PLAY NOW</a>
+        </div>
+
+        <!-- Game 3 -->
+        <div class="game-card">
+            <div class="game-icon">☠️</div>
+            <h2 class="game-title">Toxic Jungle</h2>
+            <p class="game-desc">Eat apples, dodge the purple poison skulls!</p>
+            <a href="toxic-snake.html" class="play-btn">PLAY NOW</a>
+        </div>
+
+        <!-- Future Games (Currently Locked) -->
+        <div class="game-card locked"><div class="game-icon">⚡</div><h2 class="game-title">Speed Ninja</h2><p class="game-desc">Super fast snake, only for pro players!</p><a href="#" class="play-btn">Coming Soon</a></div>
+        <div class="game-card locked"><div class="game-icon">🧱</div><h2 class="game-title">Maze Runner</h2><p class="game-desc">Navigate through moving walls.</p><a href="#" class="play-btn">Coming Soon</a></div>
+        <div class="game-card locked"><div class="game-icon">🌈</div><h2 class="game-title">Color Changer</h2><p class="game-desc">Match the snake color with the food.</p><a href="#" class="play-btn">Coming Soon</a></div>
+        <div class="game-card locked"><div class="game-icon">👻</div><h2 class="game-title">Ghost Mode</h2><p class="game-desc">Invisible tail, remember your path!</p><a href="#" class="play-btn">Coming Soon</a></div>
+        <div class="game-card locked"><div class="game-icon">💣</div><h2 class="game-title">Minefield</h2><p class="game-desc">Bombs spawn every 10 seconds.</p><a href="#" class="play-btn">Coming Soon</a></div>
+        <div class="game-card locked"><div class="game-icon">❄️</div><h2 class="game-title">Ice Slider</h2><p class="game-desc">Slippery controls, hard to stop!</p><a href="#" class="play-btn">Coming Soon</a></div>
+        <div class="game-card locked"><div class="game-icon">🐉</div><h2 class="game-title">Dragon Boss</h2><p class="game-desc">Defeat the evil dot to win the game.</p><a href="#" class="play-btn">Coming Soon</a></div>
+    </div>
+
+</body>
+</html>
