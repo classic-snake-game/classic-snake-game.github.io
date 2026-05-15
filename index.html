@@ -2,54 +2,36 @@
 <html lang="en">
 <head>
     <meta name="google-site-verification" content="1qQdMPaLS9yZSezr2i1GhqdcpqG87GExR_TPdT_F-V4" />
-    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>Play Best Snake Game Mods Online Free - SnakeZilla</title>
-<meta name="description" content="Looking for the best Snake game mods? Play 10 epic modified versions including Portal, Ghost Mode, and Dragon Boss. Free HTML5 browser arcade games!">
-<meta name="keywords" content="snake game mods, modified snake games, snake mod menu, play snake mods online, snake game variations">
+    <meta name="description" content="Looking for the best Snake game mods? Play 10 epic modified versions including Portal, Ghost Mode, and Dragon Boss. Free HTML5 browser arcade games!">
+    <meta name="keywords" content="snake game mods, modified snake games, snake mod menu, play snake mods online, snake game variations">
+    
     <style>
         body {
-            background: radial-gradient(circle, #1a1a3a, #050510); /* Deep space dark background */
+            background: radial-gradient(circle, #1a1a3a, #050510);
             color: #fff;
-            /* Updated Fonts: Removed Comic Sans for a cleaner, modern tech/arcade look */
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0; padding: 0; text-align: center;
             overflow-x: hidden;
         }
         
-        /* Updated Header for Neon Logo + Text */
         header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.8); /* Semi-transparent dark background */
-            padding: 20px;
-            box-shadow: 0 5px 25px rgba(90, 90, 240, 0.3); /* Soft blue neon glow */
-            border-bottom: 2px solid #5a5af0; /* Neon blue bottom border */
-            backdrop-filter: blur(5px);
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0, 0, 0, 0.8); padding: 20px;
+            box-shadow: 0 5px 25px rgba(90, 90, 240, 0.3);
+            border-bottom: 2px solid #5a5af0; backdrop-filter: blur(5px);
         }
 
-        .header-container {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        /* Styling for the Coiled Snake/Planet Logo */
-        .logo-img {
-            height: 60px;
-            filter: drop-shadow(0 0 8px #5a5af0); /* Add neon glow to the logo itself */
-            border-radius: 5px;
-        }
+        .header-container { display: flex; align-items: center; gap: 20px; }
+        .logo-img { height: 60px; filter: drop-shadow(0 0 8px #5a5af0); border-radius: 5px; }
 
         h1 {
             font-size: 40px; margin: 0; text-transform: uppercase;
-            /* Monospace font gives retro-arcade feel to titles */
-            font-family: 'Courier New', Courier, monospace; 
-            letter-spacing: 2px;
-            color: #8a8aff; /* Lighter neon blue */
-            text-shadow: 0 0 10px #8a8aff, 0 0 20px #5a5af0; /* Purple/Blue neon glow */
+            font-family: 'Courier New', Courier, monospace; letter-spacing: 2px;
+            color: #8a8aff; text-shadow: 0 0 10px #8a8aff, 0 0 20px #5a5af0;
             animation: glowPulse 2.5s infinite;
         }
         
@@ -63,43 +45,30 @@
 
         .game-grid {
             display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; padding: 40px 20px;
-            max-width: 1200px; margin: 0 auto; /* Contain grid width on large screens */
+            max-width: 1200px; margin: 0 auto;
         }
 
-        /* Updated Card Look: Darker, sharper neon borders */
         .game-card {
-            background: rgba(16, 16, 40, 0.7); /* Darker semi-transparent card */
-            border: 2px solid #3333aa; /* Darker border when not active */
-            border-radius: 15px;
-            width: 260px; padding: 25px;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-            box-shadow: 0 0 10px rgba(90, 90, 240, 0.1);
-            position: relative; overflow: hidden; /* For inner glow effect on hover */
+            background: rgba(16, 16, 40, 0.7); border: 2px solid #3333aa; border-radius: 15px;
+            width: 260px; padding: 25px; backdrop-filter: blur(10px); transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(90, 90, 240, 0.1); position: relative; overflow: hidden;
         }
         
         .game-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            border: 2px solid #00ffcc; /* Bright cyan border on hover */
-            box-shadow: 0 0 25px rgba(0, 255, 204, 0.6); /* Intense cyan neon glow */
-            background: rgba(16, 16, 40, 0.9);
+            transform: translateY(-10px) scale(1.02); border: 2px solid #00ffcc;
+            box-shadow: 0 0 25px rgba(0, 255, 204, 0.6); background: rgba(16, 16, 40, 0.9);
         }
 
-        .game-icon { font-size: 70px; margin-bottom: 15px; display: inline-block; transition: 0.3s ease;}
-        .game-card:hover .game-icon { transform: scale(1.1); filter: drop-shadow(0 0 10px #ffeb3b); } /* Icon glows yellow on hover */
+        .game-icon { margin-bottom: 15px; display: inline-block; transition: 0.3s ease;}
+        .game-card:hover .game-icon { transform: scale(1.05); filter: drop-shadow(0 0 10px #ffeb3b); }
 
         .game-title { font-size: 24px; color: #ffeb3b; margin: 10px 0; text-shadow: 1px 1px 2px #000; font-family: 'Courier New', monospace; font-weight: bold;}
         .game-desc { color: #d1d1f0; font-size: 15px; margin-bottom: 20px; height: 45px; line-height: 1.4;}
 
         .play-btn {
-            display: inline-block;
-            background: #00ffcc; /* Simple bright background */
-            color: #000; text-decoration: none;
-            padding: 10px 25px; font-size: 18px; font-weight: 900;
-            border-radius: 5px; /* Boxy look pairs better with monospace */
-            border: 1px solid #00ffcc;
-            transition: 0.2s ease-in-out; 
-            box-shadow: 0 3px 10px rgba(0, 255, 204, 0.3);
+            display: inline-block; background: #00ffcc; color: #000; text-decoration: none;
+            padding: 10px 25px; font-size: 18px; font-weight: 900; border-radius: 5px;
+            border: 1px solid #00ffcc; transition: 0.2s ease-in-out; box-shadow: 0 3px 10px rgba(0, 255, 204, 0.3);
             font-family: 'Courier New', monospace;
         }
         .play-btn:hover { background: transparent; color: #fff; box-shadow: 0 0 15px #00ffcc; }
@@ -109,10 +78,8 @@
 
     <header>
         <div class="header-container">
-            <!-- IMP: Replace image_0.png with your actual raw image link if needed -->
-            <img src="image_0.png" alt="SnakeZilla Games Coiled Snake Logo" class="logo-img">
+            <img src="images/image_0.png" alt="SnakeZilla Games Logo" class="logo-img">
             <div>
-                <!-- Emoji removed from H1 per branding discussion -->
                 <h1>SnakeZilla</h1>
                 <p class="subtitle">10 Epic Snake Game Mods to Play Online!</p>
             </div>
@@ -120,92 +87,82 @@
     </header>
 
     <div class="game-grid">
-        <!-- Game 1 -->
         <div class="game-card">
-            <div class="game-icon">🐛</div>
+            <div class="game-icon"><img src="images/snake.jpg" alt="Modern Snake" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; border: 1px solid #00ffcc;"></div>
             <h2 class="game-title">Modern Snake</h2>
             <p class="game-desc">The classic game you love, upgraded!</p>
             <a href="snake.html" class="play-btn">PLAY NOW</a>
         </div>
 
-        <!-- Game 2 -->
         <div class="game-card">
-            <div class="game-icon">🌌</div>
+            <div class="game-icon"><img src="images/portal-snake.jpg" alt="Portal Snake" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; border: 1px solid #00ffcc;"></div>
             <h2 class="game-title">Portal Snake</h2>
             <p class="game-desc">No walls! Go through the screen like magic.</p>
             <a href="portal-snake.html" class="play-btn">PLAY NOW</a>
         </div>
 
-        <!-- Game 3 -->
         <div class="game-card">
-            <div class="game-icon">☠️</div>
+            <div class="game-icon"><img src="images/toxic-snake.jpg" alt="Toxic Jungle" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; border: 1px solid #00ffcc;"></div>
             <h2 class="game-title">Toxic Jungle</h2>
             <p class="game-desc">Eat apples, dodge the purple poison skulls!</p>
             <a href="toxic-snake.html" class="play-btn">PLAY NOW</a>
         </div>
 
-        <!-- Game 4 -->
         <div class="game-card">
-            <div class="game-icon">⚡</div>
+            <div class="game-icon"><img src="images/speed-ninja.jpg" alt="Speed Ninja" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; border: 1px solid #00ffcc;"></div>
             <h2 class="game-title">Speed Ninja</h2>
             <p class="game-desc">Super fast snake, only for pro players!</p>
             <a href="speed-ninja.html" class="play-btn">PLAY NOW</a>
         </div>
 
-        <!-- Game 5 -->
         <div class="game-card">
-            <div class="game-icon">🧱</div>
+            <div class="game-icon"><img src="images/maze-runner.jpg" alt="Maze Runner" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; border: 1px solid #00ffcc;"></div>
             <h2 class="game-title">Maze Runner</h2>
             <p class="game-desc">Navigate through moving walls.</p>
             <a href="maze-runner.html" class="play-btn">PLAY NOW</a>
         </div>
 
-        <!-- Game 6 -->
         <div class="game-card">
-            <div class="game-icon">🌈</div>
+            <div class="game-icon"><img src="images/color-changer.jpg" alt="Color Changer" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; border: 1px solid #00ffcc;"></div>
             <h2 class="game-title">Color Changer</h2>
             <p class="game-desc">Match the snake color with the food.</p>
             <a href="color-changer.html" class="play-btn">PLAY NOW</a>
         </div>
 
-        <!-- Game 7 -->
         <div class="game-card">
-            <div class="game-icon">👻</div>
+            <div class="game-icon"><img src="images/ghost-snake.jpg" alt="Ghost Mode" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; border: 1px solid #00ffcc;"></div>
             <h2 class="game-title">Ghost Mode</h2>
             <p class="game-desc">Invisible tail, remember your path!</p>
             <a href="ghost-snake.html" class="play-btn">PLAY NOW</a>
         </div>
 
-        <!-- Game 8 -->
         <div class="game-card">
-            <div class="game-icon">💣</div>
+            <div class="game-icon"><img src="images/minefield-snake.jpg" alt="Minefield" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; border: 1px solid #00ffcc;"></div>
             <h2 class="game-title">Minefield</h2>
             <p class="game-desc">Bombs spawn every time you eat.</p>
             <a href="minefield-snake.html" class="play-btn">PLAY NOW</a>
         </div>
 
-        <!-- Game 9 -->
         <div class="game-card">
-            <div class="game-icon">❄️</div>
+            <div class="game-icon"><img src="images/ice-slider.jpg" alt="Ice Slider" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; border: 1px solid #00ffcc;"></div>
             <h2 class="game-title">Ice Slider</h2>
             <p class="game-desc">Slippery controls, hard to stop!</p>
             <a href="ice-slider.html" class="play-btn">PLAY NOW</a>
         </div>
 
-        <!-- Game 10 -->
         <div class="game-card">
-            <div class="game-icon">🐉</div>
+            <div class="game-icon"><img src="images/dragon-snake.jpg" alt="Dragon Boss" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; border: 1px solid #00ffcc;"></div>
             <h2 class="game-title">Dragon Boss</h2>
             <p class="game-desc">Defeat the evil dot to win the game.</p>
             <a href="dragon-snake.html" class="play-btn">PLAY NOW</a>
         </div>
     </div>
 
-    <!-- Updated Footer styled for AdSense compliance & theme cohesion -->
     <div style="max-width: 1000px; margin: 40px auto; padding: 20px; background: rgba(0,0,0,0.5); border: 1px dashed #5a5af0; border-radius: 10px; text-align: left;">
-    <h2 style="color: #8a8aff; font-size: 22px; font-family: 'Courier New', monospace;">Why Play Our Snake Game Mods?</h2>
-    <p style="color: #dcdde1; line-height: 1.6; font-size: 15px;">If you are tired of the classic retro mechanics, our exclusive collection of <strong>Snake game mods</strong> will blow your mind. At SnakeZilla, we have taken the traditional gameplay and completely modified it with custom rules, new enemies, and intense power-ups. Whether you want to battle a boss dragon, survive a toxic jungle, or test your memory with invisible ghosts, these custom snake mods offer the ultimate browser gaming experience. No downloads required!</p>
-</div>
+        <h2 style="color: #8a8aff; font-size: 22px; font-family: 'Courier New', monospace;">Why Play Our Snake Game Mods?</h2>
+        <p style="color: #dcdde1; line-height: 1.6; font-size: 15px;">If you are tired of the classic retro mechanics, our exclusive collection of <strong>Snake game mods</strong> will blow your mind. At SnakeZilla, we have taken the traditional gameplay and completely modified it with custom rules, new enemies, and intense power-ups. Whether you want to battle a boss dragon, survive a toxic jungle, or test your memory with invisible ghosts, these custom snake mods offer the ultimate browser gaming experience. No downloads required!</p>
+    </div>
+
     <footer style="margin-top: 60px; padding: 25px 20px; background: rgba(5, 5, 10, 0.9); border-top: 2px solid #5a5af0; font-family: 'Segoe UI', Tahoma, sans-serif; font-size: 14px;">
         <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; margin-bottom: 20px;">
             <a href="about.html" style="color: #00ffcc; text-decoration: none; font-weight: bold; transition: 0.2s;">About Us</a>
