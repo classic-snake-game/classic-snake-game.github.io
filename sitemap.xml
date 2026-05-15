@@ -1,83 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Homepage -->
-  <url>
-    <loc>https://classic-snake-game.github.io/</loc>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  
-  <!-- Game Pages -->
-  <url>
-    <loc>https://classic-snake-game.github.io/snake.html</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://classic-snake-game.github.io/portal-snake.html</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://classic-snake-game.github.io/toxic-snake.html</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://classic-snake-game.github.io/speed-ninja.html</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://classic-snake-game.github.io/maze-runner.html</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://classic-snake-game.github.io/color-changer.html</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://classic-snake-game.github.io/ghost-snake.html</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://classic-snake-game.github.io/minefield-snake.html</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://classic-snake-game.github.io/ice-slider.html</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://classic-snake-game.github.io/dragon-snake.html</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
+   
+   <url>
+      <loc>https://classic-snake-game.github.io/</loc>
+      <priority>1.00</priority>
+   </url>
+   <url>
+      <loc>https://classic-snake-game.github.io/blog.html</loc>
+      <priority>0.80</priority>
+   </url>
 
-  <!-- Legal Pages -->
-  <url>
-    <loc>https://classic-snake-game.github.io/about.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://classic-snake-game.github.io/contact.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://classic-snake-game.github.io/privacy.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://classic-snake-game.github.io/terms.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
+   <url><loc>https://classic-snake-game.github.io/snake.html</loc><priority>0.90</priority></url>
+   <url><loc>https://classic-snake-game.github.io/portal-snake.html</loc><priority>0.90</priority></url>
+   <url><loc>https://classic-snake-game.github.io/toxic-snake.html</loc><priority>0.90</priority></url>
+   <url><loc>https://classic-snake-game.github.io/speed-ninja.html</loc><priority>0.90</priority></url>
+   <url><loc>https://classic-snake-game.github.io/maze-runner.html</loc><priority>0.90</priority></url>
+   <url><loc>https://classic-snake-game.github.io/color-changer.html</loc><priority>0.90</priority></url>
+   <url><loc>https://classic-snake-game.github.io/ghost-snake.html</loc><priority>0.90</priority></url>
+   <url><loc>https://classic-snake-game.github.io/minefield-snake.html</loc><priority>0.90</priority></url>
+   <url><loc>https://classic-snake-game.github.io/ice-slider.html</loc><priority>0.90</priority></url>
+   <url><loc>https://classic-snake-game.github.io/dragon-snake.html</loc><priority>0.90</priority></url>
+
+   <url><loc>https://classic-snake-game.github.io/evolution-of-snake.html</loc><priority>0.70</priority></url>
+   <url><loc>https://classic-snake-game.github.io/top-5-browser-games.html</loc><priority>0.70</priority></url>
+   <url><loc>https://classic-snake-game.github.io/snake-game-strategy.html</loc><priority>0.70</priority></url>
+   <url><loc>https://classic-snake-game.github.io/benefits-of-retro-gaming.html</loc><priority>0.70</priority></url>
+
+   <url><loc>https://classic-snake-game.github.io/about.html</loc><priority>0.50</priority></url>
+   <url><loc>https://classic-snake-game.github.io/contact.html</loc><priority>0.50</priority></url>
+   <url><loc>https://classic-snake-game.github.io/privacy.html</loc><priority>0.50</priority></url>
+   <url><loc>https://classic-snake-game.github.io/terms.html</loc><priority>0.50</priority></url>
+
 </urlset>
