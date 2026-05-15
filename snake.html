@@ -90,36 +90,46 @@
             max-width: 95vw;
         }
 
-        /* Mobile Controls Styling */
+        /* Modern Gaming Controls Style */
         .controls {
-            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-top: 25px;
             margin-bottom: 20px;
-            display: grid;
-            grid-template-columns: 60px 60px 60px;
-            grid-template-rows: 60px 60px;
-            gap: 10px;
-            justify-content: center;
-        }
-        .controls button {
-            background-color: #2f3542;
-            color: white;
-            border: 2px solid #57606f;
-            border-radius: 10px;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 5px #1e272e;
             user-select: none;
+        }
+        .row {
+            display: flex;
+        }
+        .middle-row {
+            gap: 80px; /* Creates the space between LEFT and RIGHT */
+        }
+        .btn {
+            width: 70px;
+            height: 70px;
+            background: rgba(16, 16, 40, 0.8);
+            border: 2px solid #00ffcc;
+            color: #00ffcc;
+            font-size: 28px;
+            border-radius: 18px; /* Smooth pill/square shape */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 255, 204, 0.2);
+            -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
         }
-        .controls button:active {
-            box-shadow: 0 2px #1e272e;
-            transform: translateY(3px);
-            background-color: #ff4757;
+        /* Press/Active Effect */
+        .btn:active {
+            background: #00ffcc;
+            color: #000;
+            transform: scale(0.9);
+            box-shadow: 0 0 25px #00ffcc;
         }
-        #btnUp { grid-column: 2; grid-row: 1; }
-        #btnLeft { grid-column: 1; grid-row: 2; }
-        #btnDown { grid-column: 2; grid-row: 2; }
-        #btnRight { grid-column: 3; grid-row: 2; }
 
         /* SEO Article & Ad Space Styles */
         .ad-space { width: 100%; max-width: 728px; height: 90px; background: #111; border: 1px dashed #444; margin: 20px auto; display: flex; align-items: center; justify-content: center; color: #666; font-size: 14px; font-family: sans-serif; }
@@ -160,10 +170,12 @@
     </div>
 
     <div class="controls">
-        <button id="btnUp">⬆️</button>
-        <button id="btnLeft">⬅️</button>
-        <button id="btnDown">⬇️</button>
-        <button id="btnRight">➡️</button>
+        <div id="btnUp" class="btn">⬆️</div>
+        <div class="row middle-row">
+            <div id="btnLeft" class="btn">⬅️</div>
+            <div id="btnRight" class="btn">➡️</div>
+        </div>
+        <div id="btnDown" class="btn">⬇️</div>
     </div>
 
     <div class="ad-space">[ AdSense Responsive Banner ]</div>
