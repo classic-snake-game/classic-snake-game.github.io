@@ -7,7 +7,7 @@
     <meta name="keywords" content="play classic snake game, modern snake online, free snake HTML5, original snake game browser, snake game high score">
     <title>Play Modern Snake Game Online Free - SnakeZilla</title>
     <style>
-        /* Cyberpunk / Indie Dev Retro Theme */
+        /* Pro Indie Dev Retro Theme */
         :root {
             --bg-color: #0b0c10;
             --panel-bg: #1f2833;
@@ -110,7 +110,7 @@
         }
 
         canvas {
-            background-color: #12151c;
+            background-color: #1a1a24;
             border: 2px solid var(--neon-blue-dim);
             box-shadow: 0 0 20px rgba(69, 162, 158, 0.1);
             max-width: 95vw;
@@ -215,11 +215,11 @@
         
         <div id="startScreen" class="overlay">
             <h3>System Ready</h3>
-            <button class="action-btn" onclick="startGame()">Initialize</button>
+            <button class="action-btn" onclick="startGame()">Start Hunting</button>
         </div>
 
         <div id="gameOverScreen" class="overlay" style="display: none;">
-            <h3 style="color: var(--neon-pink);">Subject Terminated</h3>
+            <h3 style="color: var(--neon-pink);">Game Over</h3>
             <p id="finalScoreText" style="font-size: 18px; margin-bottom: 25px; color: #fff;"></p>
             <button class="action-btn" onclick="startGame()">Restart</button>
         </div>
@@ -241,10 +241,10 @@
         <p>Welcome to <strong>Modern Snake</strong>, the ultimate upgraded version of the classic retro game that defined a generation. If you love the simple yet highly addictive mechanics of traditional arcade gaming, this is exactly what you are looking for. Play it for free directly in your web browser, perfectly optimized for both desktop and mobile devices.</p>
         
         <h3>The Classic Rules, Upgraded</h3>
-        <p>Your goal is simple: navigate the neon serpent around the dark arena to eat the glowing data nodes. Every node you consume makes your snake grow longer, which makes navigating the tight spaces more difficult. Avoid crashing into the outer walls or your own tail, as a single collision results in an instant termination.</p>
+        <p>Your goal is simple: navigate the serpent around the dark arena to hunt the mice. Every mouse you consume makes your snake grow longer, which makes navigating the tight spaces more difficult. Avoid crashing into the outer walls or your own tail, as a single collision results in an instant termination.</p>
 
-        <h3>Dynamic Level Progression</h3>
-        <p>What sets our Modern Snake game apart is the built-in level progression and high score tracking. Every time you score 5 points, your snake will hit a new level threshold. With each new level, the base speed of the game increases, testing your reflexes and quick thinking. Your highest score is automatically saved locally.</p>
+        <h3>Dynamic Evolution Progression</h3>
+        <p>What sets our Modern Snake game apart is the built-in level progression and evolution tracking. Every time you score 5 points, your snake will hit a new level threshold, evolving into a deadlier species (changing colors) and increasing its base speed to test your reflexes. Your highest score is automatically saved locally.</p>
 
         <h3>Access More Mods</h3>
         <div class="mod-links">
@@ -268,14 +268,6 @@
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
-
-        // System Colors matched to CSS
-        const theme = {
-            bg: "#12151c",
-            snakeHead: "#66fcf1",
-            snakeBody: "#45a29e",
-            food: "#ff007a"
-        };
 
         // Audio System
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -379,32 +371,82 @@
         bindButton("btnLeft", "LEFT", "RIGHT");
         bindButton("btnRight", "RIGHT", "LEFT");
 
-        // Clean Modern Drawing
-        function drawBug(x, y) {
-            ctx.fillStyle = theme.food;
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = theme.food;
-            ctx.fillRect(x + 2, y + 2, box - 4, box - 4);
-            ctx.shadowBlur = 0;
+        // --- NEW FEATURE: Draw Mouse ---
+        function drawMouse(x, y) {
+            const cx = x + box / 2;
+            const cy = y + box / 2;
+
+            // Pink Tail
+            ctx.strokeStyle = "#ff9ff3";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(cx + 4, cy + 4);
+            ctx.quadraticCurveTo(cx + 12, cy + 10, cx + 8, cy + 15);
+            ctx.stroke();
+
+            // Gray Body
+            ctx.fillStyle = "#a4b0be";
+            ctx.beginPath();
+            ctx.ellipse(cx - 1, cy - 1, 8, 5, Math.PI / 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Ears
+            ctx.fillStyle = "#747d8c";
+            ctx.beginPath(); ctx.arc(cx + 2, cy - 6, 2.5, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(cx - 6, cy + 2, 2.5, 0, Math.PI*2); ctx.fill();
+
+            // Pink Nose
+            ctx.fillStyle = "#ff9ff3";
+            ctx.beginPath(); ctx.arc(cx - 6, cy - 6, 1.5, 0, Math.PI*2); ctx.fill();
         }
 
+        // --- NEW FEATURE: Snake Evolution Colors ---
+        function getSnakeColors(currentLevel) {
+            if (currentLevel === 1) return { head: "#2ecc71", body: "#27ae60" }; // Green Snake
+            if (currentLevel === 2) return { head: "#f1c40f", body: "#f39c12" }; // Golden Python
+            if (currentLevel === 3) return { head: "#e67e22", body: "#d35400" }; // Orange Viper
+            if (currentLevel === 4) return { head: "#e74c3c", body: "#c0392b" }; // Red King Snake
+            return { head: "#34495e", body: "#2c3e50" }; // Black Mamba for Level 5+
+        }
+
+        // Draw Evolving Snake
         function drawSnakePart(part, index) {
             const isHead = index === 0;
-            ctx.fillStyle = isHead ? theme.snakeHead : theme.snakeBody;
-            ctx.fillRect(part.x, part.y, box, box);
-            
-            ctx.strokeStyle = theme.bg;
-            ctx.lineWidth = 1;
-            ctx.strokeRect(part.x, part.y, box, box);
+            const cx = part.x + box / 2;
+            const cy = part.y + box / 2;
+            const colors = getSnakeColors(level);
+
+            ctx.fillStyle = isHead ? colors.head : colors.body;
+            ctx.beginPath();
+            ctx.arc(cx, cy, box / 2.2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Eyes for the Head
+            if (isHead) {
+                ctx.fillStyle = "white";
+                let e1x, e1y, e2x, e2y, offset = 4;
+                
+                if (d === "RIGHT") { e1x = cx + offset; e1y = cy - offset; e2x = cx + offset; e2y = cy + offset; }
+                else if (d === "LEFT") { e1x = cx - offset; e1y = cy - offset; e2x = cx - offset; e2y = cy + offset; }
+                else if (d === "UP") { e1x = cx - offset; e1y = cy - offset; e2x = cx + offset; e2y = cy - offset; }
+                else if (d === "DOWN") { e1x = cx - offset; e1y = cy + offset; e2x = cx + offset; e2y = cy + offset; }
+
+                ctx.beginPath(); ctx.arc(e1x, e1y, 3, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(e2x, e2y, 3, 0, Math.PI * 2); ctx.fill();
+
+                // Make eyes red for Black Mamba (Level 5+)
+                ctx.fillStyle = level >= 5 ? "#ff4757" : "black"; 
+                ctx.beginPath(); ctx.arc(e1x + (d === "RIGHT" ? 1 : d === "LEFT" ? -1 : 0), e1y + (d === "DOWN" ? 1 : d === "UP" ? -1 : 0), 1.5, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(e2x + (d === "RIGHT" ? 1 : d === "LEFT" ? -1 : 0), e2y + (d === "DOWN" ? 1 : d === "UP" ? -1 : 0), 1.5, 0, Math.PI * 2); ctx.fill();
+            }
         }
 
         function draw() {
             changingDirection = false; 
 
-            ctx.fillStyle = theme.bg;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            drawBug(food.x, food.y);
+            drawMouse(food.x, food.y);
 
             for (let i = 0; i < snake.length; i++) {
                 drawSnakePart(snake[i], i);
@@ -491,10 +533,6 @@
             document.getElementById("finalScoreText").innerText = "FINAL SCORE: " + score + " | LEVEL: " + level;
             document.getElementById("gameOverScreen").style.display = "flex";
         }
-
-        // Initial Paint
-        ctx.fillStyle = theme.bg;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
     </script>
 </body>
 </html>
