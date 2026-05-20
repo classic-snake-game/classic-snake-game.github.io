@@ -7,192 +7,414 @@
     <meta name="keywords" content="fast snake game online, speed ninja snake, reflex html5 games, quick snake game free, ninja games browser">
     <title>Play Speed Ninja Snake Game Free - SnakeZilla</title>
     <style>
-        body { background: #0a0a0a; color: #fff; text-align: center; margin: 0; font-family: 'Courier New', Courier, monospace; overflow-x: hidden; }
-        header { background: #800000; padding: 10px; border-bottom: 3px solid #ff0000; }
-        h2 { margin: 0; color: #ff0000; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 0 5px #ff0000; }
-        .score-board { display: flex; justify-content: center; gap: 20px; margin: 10px 0; font-size: 18px; font-weight: bold; color: #ff3333; }
-        .game-container { position: relative; display: flex; flex-direction: column; align-items: center; }
-        canvas { background: #000; border: 2px solid #ff3333; border-radius: 5px; box-shadow: 0 0 20px rgba(255, 0, 0, 0.5); max-width: 95vw; }
-        
-        .overlay { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 400px; max-width: 95vw; height: 400px; background: rgba(0, 0, 0, 0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 5px; z-index: 10; border: 2px solid #ff0000;}
-        .overlay h3 { font-size: 32px; color: #ff0000; margin-bottom: 20px; text-shadow: 0 0 10px #ff0000; text-transform: uppercase; }
-        .action-btn { background: #ff0000; color: #fff; border: none; padding: 12px 30px; font-size: 20px; font-weight: bold; border-radius: 5px; cursor: pointer; box-shadow: 0 4px 15px rgba(255, 0, 0, 0.5); font-family: 'Courier New'; }
-        .action-btn:active { transform: scale(0.95); }
+        /* Speed Ninja / Cyberpunk Red Theme */
+        :root {
+            --bg-color: #080505;
+            --panel-bg: #140808;
+            --text-main: #c5c6c7;
+            --neon-red: #ff003c;
+            --neon-red-dim: #b3002a;
+            --neon-white: #ffffff;
+            --font-stack: 'Consolas', 'Courier New', monospace;
+        }
 
-        /* Modern Gaming Controls Style - Ninja Red Theme */
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-stack);
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        header {
+            background-color: #050202;
+            padding: 20px 10px;
+            border-bottom: 2px solid var(--neon-red-dim);
+        }
+
+        h1.logo { 
+            margin: 0; 
+            font-size: 26px; 
+            color: var(--neon-red); 
+            text-transform: uppercase; 
+            letter-spacing: 5px; 
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--neon-red-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .highlight-text { color: var(--neon-red); }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            max-width: 95vw;
+            height: 400px;
+            background: rgba(8, 5, 5, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid var(--neon-red-dim);
+            z-index: 10;
+        }
+
+        .overlay h3 {
+            font-size: 28px;
+            margin-bottom: 25px;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .action-btn {
+            background: transparent;
+            color: var(--neon-red);
+            border: 2px solid var(--neon-red);
+            padding: 12px 35px;
+            font-size: 18px;
+            font-weight: bold;
+            font-family: var(--font-stack);
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            letter-spacing: 1px;
+        }
+
+        .action-btn:hover, .action-btn:active { 
+            background: var(--neon-red);
+            color: var(--bg-color);
+            box-shadow: 0 0 15px var(--neon-red-dim);
+        }
+
+        canvas {
+            background-color: #080505;
+            border: 2px solid var(--neon-red-dim);
+            box-shadow: 0 0 20px rgba(255, 0, 60, 0.1);
+            max-width: 95vw;
+            display: block;
+        }
+
+        /* Tactical D-Pad */
         .controls {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
-            margin-top: 25px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 30px;
             user-select: none;
         }
         .row { display: flex; }
-        .middle-row { gap: 80px; } /* Space between Left and Right */
-
-        .btn {
-            width: 70px;
-            height: 70px;
-            background: rgba(40, 10, 10, 0.8);
-            border: 2px solid #ff0000;
-            color: #ff0000;
-            font-size: 28px;
-            border-radius: 18px;
+        .middle-row { gap: 70px; }
+        
+        .d-btn {
+            width: 65px;
+            height: 65px;
+            background: var(--panel-bg);
+            border: 2px solid var(--neon-red-dim);
+            color: var(--neon-red);
+            font-size: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 10px rgba(255, 0, 0, 0.2);
+            transition: 0.1s;
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
         }
-        /* Press/Active Effect */
-        .btn:active {
-            background: #ff0000;
-            color: #000;
-            transform: scale(0.9);
-            box-shadow: 0 0 25px #ff0000;
+        .d-btn:active {
+            background: var(--neon-red);
+            color: var(--bg-color);
         }
 
-        /* SEO Article & Ad Space */
-        .ad-space { width: 100%; max-width: 728px; height: 90px; background: #111; border: 1px dashed #444; margin: 20px auto; display: flex; align-items: center; justify-content: center; color: #666; font-size: 14px; font-family: sans-serif; }
-        .seo-article { max-width: 800px; margin: 0 auto 40px auto; padding: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 10px; text-align: left; line-height: 1.6; border: 1px solid #ff0000; font-family: 'Segoe UI', sans-serif;}
-        .seo-article h1, .seo-article h3 { color: #ff3333; }
-        .seo-article p { color: #dcdde1; font-size: 15px; }
-        .home-btn { display: inline-block; margin: 20px 0; padding: 10px 20px; background: #ff0000; color: #fff; text-decoration: none; font-weight: bold; border-radius: 5px; }
+        /* Sleek Ad Space */
+        .ad-space { 
+            width: 100%; 
+            max-width: 728px; 
+            height: 90px; 
+            background: #000; 
+            border: 1px solid #222; 
+            margin: 20px auto; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: #444; 
+            font-size: 12px; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Dev-Style Article Block */
+        .seo-article { 
+            max-width: 800px; 
+            margin: 0 auto 40px auto; 
+            padding: 30px; 
+            background: var(--panel-bg); 
+            text-align: left; 
+            line-height: 1.8; 
+            border-left: 4px solid var(--neon-red); 
+        }
+        .seo-article h2, .seo-article h3 { color: var(--text-main); text-transform: uppercase; border-bottom: 1px solid #222; padding-bottom: 10px;}
+        .seo-article p, .seo-article li { color: #8a8d91; font-size: 15px; }
+        
+        .mod-links {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 20px;
+        }
+        .mod-links a {
+            background: transparent; color: var(--text-main); text-decoration: none; padding: 8px 15px; border: 1px solid #444; font-size: 14px; text-transform: uppercase; transition: 0.2s;
+        }
+        .mod-links a:hover { border-color: var(--neon-red); color: var(--neon-red); }
+
+        footer {
+            margin-top: 40px; padding: 25px; background: #050202; border-top: 1px solid #111; font-size: 14px;
+        }
+        .footer-links { display: flex; justify-content: center; gap: 25px; margin-bottom: 15px; }
+        .footer-links a { color: var(--neon-red-dim); text-decoration: none; }
+        .footer-links a:hover { color: var(--neon-red); }
+
     </style>
 </head>
 <body>
-    <header><h2>⚡ Speed Ninja</h2></header>
-    
-    <div class="ad-space">[ AdSense Banner 728x90 ]</div>
+
+    <header>
+        <h1 class="logo">SNAKE: Speed Ninja</h1>
+    </header>
+
+    <div class="ad-space">Advertisement</div>
 
     <div class="score-board">
-        <div id="levelDisplay" style="color: #fff;">Level: 1</div>
-        <div id="scoreDisplay">Score: 0</div>
+        <div>LVL: <span id="levelDisplay" class="highlight-text">1</span></div>
+        <div>SCR: <span id="scoreDisplay" class="highlight-text">0</span></div>
     </div>
     
     <div class="game-container">
         <canvas id="gameCanvas" width="400" height="400"></canvas>
         <div id="startScreen" class="overlay">
-            <h3>Ready Ninja?</h3>
-            <button class="action-btn" onclick="startGame()">▶️ Swift Strike</button>
+            <h3>System Ready</h3>
+            <button class="action-btn" onclick="startGame()">Initialize</button>
         </div>
         <div id="gameOverScreen" class="overlay" style="display: none;">
-            <h3>Mission Failed ⚔️</h3>
-            <p id="finalScoreText" style="font-size: 20px; margin-bottom: 20px; color: #fff;">Score: 0</p>
-            <button class="action-btn" onclick="startGame()">🔄 Retry</button>
+            <h3 style="color: var(--neon-red);">Mission Failed</h3>
+            <p id="finalScoreText" style="font-size: 18px; margin-bottom: 25px; color: #fff;"></p>
+            <button class="action-btn" onclick="startGame()">Retry</button>
         </div>
     </div>
 
     <div class="controls">
-        <div id="btnUp" class="btn">⬆️</div>
+        <div id="btnUp" class="d-btn">▲</div>
         <div class="row middle-row">
-            <div id="btnLeft" class="btn">⬅️</div>
-            <div id="btnRight" class="btn">➡️</div>
+            <div id="btnLeft" class="d-btn">◄</div>
+            <div id="btnRight" class="d-btn">►</div>
         </div>
-        <div id="btnDown" class="btn">⬇️</div>
+        <div id="btnDown" class="d-btn">▼</div>
     </div>
 
-    <div class="ad-space">[ AdSense Responsive Banner ]</div>
+    <div class="ad-space">Advertisement</div>
 
     <div class="seo-article">
-        <h1>Play Speed Ninja Snake Game Online</h1>
+        <h2>Play Speed Ninja Snake Game Online</h2>
         <p>Do you have the reflexes of a true warrior? <strong>Speed Ninja</strong> takes the traditional snake game formula and injects it with extreme, adrenaline-pumping velocity. Designed for pro players, this fast-paced HTML5 browser game requires lightning-fast decision-making and precise finger movements. Play it now for free, directly in your browser!</p>
         
         <h3>Game Features</h3>
-        <p>In this dark, ninja-themed arena, you control a swift red serpent. Instead of apples or bugs, your goal is to collect the silver <strong>Ninja Shurikens</strong> scattered across the board. The game features a stunning motion-blur visual effect that emphasizes the sheer speed of your snake as it slithers across the screen.</p>
+        <p>In this dark, cyber-ninja arena, you control a swift serpent. Instead of standard prey, your goal is to collect the silver <strong>Ninja Shurikens</strong> scattered across the board. The game features a stunning motion-blur visual effect that emphasizes the sheer speed of your snake as it slithers across the screen.</p>
 
-        <h3>Level Up Mechanics</h3>
-        <p>Speed Ninja starts off fast, but it doesn't stop there. For every 5 shurikens you successfully collect, you will <strong>Level Up</strong>. With each level, the base speed of the game increases significantly, and the motion blur trail behind your snake becomes longer and more dramatic. Can you handle the speed of Level 5?</p>
-
-        <h3>How to Master the Speed</h3>
-        <ul>
-            <li><strong>Look ahead:</strong> Don't watch your snake's head. Keep your eyes focused on the shuriken and mentally plan the path before you get there.</li>
-            <li><strong>Pre-turn:</strong> Because the game runs at a high frame rate, you need to input your turns (using arrow keys or mobile buttons) slightly earlier than you would in a normal game.</li>
-            <li><strong>Stay centered:</strong> Running along the edges gives you zero time to react if a shuriken spawns nearby. Always try to return to the middle of the arena.</li>
-        </ul>
+        <h3>Rank Evolution Mechanics</h3>
+        <p>Speed Ninja starts off fast, but it doesn't stop there. For every 5 shurikens you successfully collect, you will <strong>Level Up</strong>. With each level, your snake will evolve its rank (changing colors to denote mastery), the base speed increases significantly, and the motion blur trail behind your snake becomes longer and more dramatic. Can you reach the legendary Shadow Ninja rank at Level 5?</p>
         
-        <center><a href="index.html" class="home-btn">⬅️ Back to More Games</a></center>
-    </div>
-<div style="max-width: 800px; margin: 0 auto 40px auto; padding: 20px; background: rgba(0, 0, 0, 0.6); border: 1px solid #5a5af0; border-radius: 10px; text-align: center; box-shadow: 0 0 15px rgba(90, 90, 240, 0.2);">
-        <h3 style="color: #8a8aff; margin-top: 0; font-family: 'Courier New', monospace; font-size: 24px;">🔥 Play More Snake Game Mods</h3>
-        <p style="color: #dcdde1; font-size: 15px; margin-bottom: 20px;">Keep the adrenaline pumping! Try these fan-favorite custom snake variations:</p>
-        
-        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;">
-            <a href="dragon-snake.html" style="background: #ff3300; color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; transition: 0.3s; border: 1px solid #ff3300; box-shadow: 0 0 10px rgba(255, 51, 0, 0.4); font-family: 'Segoe UI', sans-serif;">🐉 Dragon Boss</a>
-            
-            <a href="speed-ninja.html" style="background: #ff0000; color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; transition: 0.3s; border: 1px solid #ff0000; box-shadow: 0 0 10px rgba(255, 0, 0, 0.4); font-family: 'Segoe UI', sans-serif;">⚡ Speed Ninja</a>
-            
-            <a href="toxic-snake.html" style="background: #33cc00; color: #000; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; transition: 0.3s; border: 1px solid #33cc00; box-shadow: 0 0 10px rgba(51, 204, 0, 0.4); font-family: 'Segoe UI', sans-serif;">☠️ Toxic Jungle</a>
-            
-            <a href="index.html" style="background: transparent; color: #00ffcc; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; border: 2px solid #00ffcc; box-shadow: inset 0 0 5px rgba(0, 255, 204, 0.2); font-family: 'Segoe UI', sans-serif;">🏠 All 10 Mods</a>
+        <h3>Access More Mods</h3>
+        <div class="mod-links">
+            <a href="dragon-snake.html">Dragon Boss</a>
+            <a href="toxic-snake.html">Toxic Jungle</a>
+            <a href="index.html">Classic Snake</a>
+            <a href="index.html">View All Mods</a>
         </div>
     </div>
-    <footer style="margin-top: 40px; padding: 25px; background: rgba(0, 0, 0, 0.8); border-top: 2px solid #ff0000; font-size: 15px; font-family: 'Segoe UI', sans-serif;">
-        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-bottom: 15px;">
-            <a href="about.html" style="color: #ff3333; text-decoration: none;">About Us</a>
-            <a href="contact.html" style="color: #ff3333; text-decoration: none;">Contact Us</a>
-            <a href="privacy.html" style="color: #ff3333; text-decoration: none;">Privacy Policy</a>
-            <a href="terms.html" style="color: #ff3333; text-decoration: none;">Terms of Service</a>
+    
+    <footer>
+        <div class="footer-links">
+            <a href="about.html">About Us</a>
+            <a href="contact.html">Contact Us</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="terms.html">Terms of Service</a>
         </div>
-        <p style="color: #a4b0be; margin: 0; font-size: 13px;">&copy; 2026 SnakeZilla Games.</p>
+        <p style="color: #444; margin: 0;">&copy; 2026 SnakeZilla Games.</p>
     </footer>
 
     <script>
-        const canvas = document.getElementById("gameCanvas"); const ctx = canvas.getContext("2d");
-        const AudioContext = window.AudioContext || window.webkitAudioContext; let audioCtx;
-        function initAudio() { if (!audioCtx) audioCtx = new AudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume(); }
+        const canvas = document.getElementById("gameCanvas"); 
+        const ctx = canvas.getContext("2d");
+        
+        // Audio System
+        const AudioContext = window.AudioContext || window.webkitAudioContext; 
+        let audioCtx;
+        
+        function initAudio() { 
+            if (!audioCtx) audioCtx = new AudioContext(); 
+            if (audioCtx.state === 'suspended') audioCtx.resume(); 
+        }
+        
         function playSound(type) {
-            if (!audioCtx) return; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination);
-            if (type === 'eat') { osc.type = 'triangle'; osc.frequency.setValueAtTime(800, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(1600, audioCtx.currentTime + 0.05); gain.gain.setValueAtTime(0.3, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05); osc.start(); osc.stop(audioCtx.currentTime + 0.05); }
-            else if (type === 'die') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.4); gain.gain.setValueAtTime(0.4, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4); osc.start(); osc.stop(audioCtx.currentTime + 0.4); }
-            else if (type === 'levelUp') { osc.type = 'square'; osc.frequency.setValueAtTime(400, audioCtx.currentTime); osc.frequency.setValueAtTime(800, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.3, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2); osc.start(); osc.stop(audioCtx.currentTime + 0.2); }
+            if (!audioCtx) return; 
+            const osc = audioCtx.createOscillator(); 
+            const gain = audioCtx.createGain(); 
+            osc.connect(gain); 
+            gain.connect(audioCtx.destination);
+            
+            if (type === 'eat') { 
+                osc.type = 'triangle'; 
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime); 
+                osc.frequency.exponentialRampToValueAtTime(1600, audioCtx.currentTime + 0.05); 
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime); 
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05); 
+                osc.start(); osc.stop(audioCtx.currentTime + 0.05); 
+            }
+            else if (type === 'die') { 
+                osc.type = 'sawtooth'; 
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime); 
+                osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.4); 
+                gain.gain.setValueAtTime(0.4, audioCtx.currentTime); 
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4); 
+                osc.start(); osc.stop(audioCtx.currentTime + 0.4); 
+            }
+            else if (type === 'levelUp') { 
+                osc.type = 'square'; 
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime); 
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime + 0.1); 
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime); 
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2); 
+                osc.start(); osc.stop(audioCtx.currentTime + 0.2); 
+            }
         }
 
+        // Game Variables
         let box = 20, score = 0, level = 1, speed = 80, d = "RIGHT";
-        let snake = []; let food = {}; let gameLoop; let isGameRunning = false;
-        let blurAlpha = 0.4; 
+        let snake = []; 
+        let food = {}; 
+        let gameLoop; 
+        let isGameRunning = false;
+        let changingDirection = false; // Bug Fix 2
+        let blurAlpha = 0.4;
 
-        function randomPos() { return { x: Math.floor(Math.random()*19+1)*box, y: Math.floor(Math.random()*19+1)*box }; }
+        function randomPos() { 
+            return { x: Math.floor(Math.random()*19)*box, y: Math.floor(Math.random()*19)*box }; 
+        }
 
-        document.addEventListener("keydown", e => {
+        // Controls with Scroll Fix & Rapid Press Bug Fix
+        document.addEventListener("keydown", (e) => {
+            if([37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+                e.preventDefault(); // Bug Fix 1
+            }
+
             if(!isGameRunning) return;
-            if(e.keyCode == 37 && d != "RIGHT") d = "LEFT"; else if(e.keyCode == 38 && d != "DOWN") d = "UP";
-            else if(e.keyCode == 39 && d != "LEFT") d = "RIGHT"; else if(e.keyCode == 40 && d != "UP") d = "DOWN";
+            if(changingDirection) return; // Bug Fix 2
+
+            if (e.keyCode == 37 && d != "RIGHT") { d = "LEFT"; changingDirection = true; }
+            else if (e.keyCode == 38 && d != "DOWN") { d = "UP"; changingDirection = true; }
+            else if (e.keyCode == 39 && d != "LEFT") { d = "RIGHT"; changingDirection = true; }
+            else if (e.keyCode == 40 && d != "UP") { d = "DOWN"; changingDirection = true; }
         });
 
-        // Updated to support both touch and mouse clicks perfectly
-        const bindBtn = (id, dir, opp) => { 
-            const handler = (e) => { e.preventDefault(); if(!isGameRunning) return; if(d != opp) d = dir; };
-            document.getElementById(id).addEventListener("touchstart", handler);
-            document.getElementById(id).addEventListener("mousedown", handler);
+        const bindBtn = (id, newDir, oppDir) => {
+            const btn = document.getElementById(id);
+            const handler = (e) => {
+                e.preventDefault(); 
+                if(!isGameRunning) return;
+                if(changingDirection) return; 
+                
+                if (d != oppDir && d != newDir) {
+                    d = newDir;
+                    changingDirection = true;
+                }
+            };
+            btn.addEventListener("touchstart", handler, {passive: false});
+            btn.addEventListener("mousedown", handler);
         };
-        bindBtn("btnUp", "UP", "DOWN"); bindBtn("btnDown", "DOWN", "UP"); bindBtn("btnLeft", "LEFT", "RIGHT"); bindBtn("btnRight", "RIGHT", "LEFT");
 
+        bindBtn("btnUp", "UP", "DOWN"); 
+        bindBtn("btnDown", "DOWN", "UP"); 
+        bindBtn("btnLeft", "LEFT", "RIGHT"); 
+        bindBtn("btnRight", "RIGHT", "LEFT");
+
+        // Shuriken Drawing
         function drawShuriken(x, y) {
             const cx = x + box/2, cy = y + box/2;
-            ctx.fillStyle = "#dfe6e9"; ctx.shadowBlur = 5; ctx.shadowColor = "#fff"; ctx.beginPath();
+            ctx.fillStyle = "#ffffff"; 
+            ctx.shadowBlur = 10; 
+            ctx.shadowColor = "#00d0ff"; 
+            
+            ctx.beginPath();
             ctx.moveTo(cx, cy-10); ctx.lineTo(cx+3, cy-3); ctx.lineTo(cx+10, cy); ctx.lineTo(cx+3, cy+3);
             ctx.lineTo(cx, cy+10); ctx.lineTo(cx-3, cy+3); ctx.lineTo(cx-10, cy); ctx.lineTo(cx-3, cy-3);
-            ctx.closePath(); ctx.fill(); ctx.fillStyle = "#2d3436"; ctx.beginPath(); ctx.arc(cx, cy, 2, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
+            ctx.closePath(); ctx.fill(); 
+            
+            ctx.fillStyle = "#050505"; 
+            ctx.beginPath(); ctx.arc(cx, cy, 2, 0, Math.PI*2); ctx.fill(); 
+            ctx.shadowBlur = 0;
+        }
+
+        // Ninja Rank Evolution Colors
+        function getSnakeColors(currentLevel) {
+            if (currentLevel === 1) return { head: "#ff003c", body: "#b3002a" }; // Red Ninja
+            if (currentLevel === 2) return { head: "#00d0ff", body: "#008ab3" }; // Blue/Cyan Ninja
+            if (currentLevel === 3) return { head: "#ffeb3b", body: "#b3a429" }; // Gold Ninja
+            if (currentLevel === 4) return { head: "#ffffff", body: "#cccccc" }; // Silver Ninja
+            return { head: "#333333", body: "#1a1a1a" }; // Shadow Ninja (Level 5+)
         }
 
         function drawSnakePart(part, index) {
-            const isHead = index === 0; const cx = part.x + box/2, cy = part.y + box/2;
-            ctx.shadowBlur = isHead ? 8 : 0; ctx.shadowColor = "#ff0000";
-            ctx.fillStyle = isHead ? "#e84118" : (index % 2 === 0 ? "#c23616" : "#8c7ae6"); 
-            if(index !== 0 && index % 2 !== 0) ctx.fillStyle = "#2f3640"; 
-            ctx.beginPath(); ctx.arc(cx, cy, box/2.2, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
+            const isHead = index === 0; 
+            const cx = part.x + box/2, cy = part.y + box/2;
+            const colors = getSnakeColors(level);
+
+            ctx.shadowBlur = isHead ? 8 : 0; 
+            ctx.shadowColor = colors.head;
+            ctx.fillStyle = isHead ? colors.head : colors.body; 
+            
+            ctx.beginPath(); ctx.arc(cx, cy, box/2.2, 0, Math.PI*2); ctx.fill(); 
+            ctx.shadowBlur = 0;
+            
             if(isHead) {
-                ctx.fillStyle = "white"; let e1x, e1y, e2x, e2y, off=4;
-                if(d==="RIGHT"){e1x=cx+off; e1y=cy-off; e2x=cx+off; e2y=cy+off;} else if(d==="LEFT"){e1x=cx-off; e1y=cy-off; e2x=cx-off; e2y=cy+off;}
-                else if(d==="UP"){e1x=cx-off; e1y=cy-off; e2x=cx+off; e2y=cy-off;} else if(d==="DOWN"){e1x=cx-off; e1y=cy+off; e2x=cx+off; e2y=cy+off;}
-                ctx.beginPath(); ctx.arc(e1x, e1y, 3, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(e2x, e2y, 3, 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = "black";
+                ctx.fillStyle = "white"; 
+                let e1x, e1y, e2x, e2y, off=4;
+                if(d==="RIGHT"){e1x=cx+off; e1y=cy-off; e2x=cx+off; e2y=cy+off;} 
+                else if(d==="LEFT"){e1x=cx-off; e1y=cy-off; e2x=cx-off; e2y=cy+off;}
+                else if(d==="UP"){e1x=cx-off; e1y=cy-off; e2x=cx+off; e2y=cy-off;} 
+                else if(d==="DOWN"){e1x=cx-off; e1y=cy+off; e2x=cx+off; e2y=cy+off;}
+                
+                // Shadow Ninja gets glowing red eyes
+                if(level >= 5) {
+                    ctx.fillStyle = "#ff003c";
+                    ctx.shadowBlur = 5;
+                    ctx.shadowColor = "#ff003c";
+                }
+                
+                ctx.beginPath(); ctx.arc(e1x, e1y, 3, 0, Math.PI*2); ctx.fill(); 
+                ctx.beginPath(); ctx.arc(e2x, e2y, 3, 0, Math.PI*2); ctx.fill();
+                ctx.shadowBlur = 0;
+                
+                ctx.fillStyle = level >= 5 ? "#ffffff" : "black";
                 ctx.beginPath(); ctx.arc(e1x+(d==="RIGHT"?1:d==="LEFT"?-1:0), e1y+(d==="DOWN"?1:d==="UP"?-1:0), 1.5, 0, Math.PI*2); ctx.fill();
                 ctx.beginPath(); ctx.arc(e2x+(d==="RIGHT"?1:d==="LEFT"?-1:0), e2y+(d==="DOWN"?1:d==="UP"?-1:0), 1.5, 0, Math.PI*2); ctx.fill();
             }
@@ -200,26 +422,43 @@
 
         function draw() {
             if(!isGameRunning) return;
-            ctx.fillStyle = `rgba(0, 0, 0, ${blurAlpha})`; ctx.fillRect(0, 0, canvas.width, canvas.height); 
+            changingDirection = false; // Reset lock at new frame
+
+            // Motion Blur Effect (Uses the --bg-color #080505)
+            ctx.fillStyle = `rgba(8, 5, 5, ${blurAlpha})`; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height); 
+            
             drawShuriken(food.x, food.y);
+            
             for (let i = 0; i < snake.length; i++) drawSnakePart(snake[i], i);
 
             let snakeX = snake[0].x, snakeY = snake[0].y;
-            if (d == "LEFT") snakeX -= box; if (d == "UP") snakeY -= box;
-            if (d == "RIGHT") snakeX += box; if (d == "DOWN") snakeY += box;
+            
+            if (d == "LEFT") snakeX -= box; 
+            if (d == "UP") snakeY -= box;
+            if (d == "RIGHT") snakeX += box; 
+            if (d == "DOWN") snakeY += box;
 
             if (snakeX == food.x && snakeY == food.y) {
-                score++; playSound('eat'); food = randomPos();
+                score++; 
+                playSound('eat'); 
+                food = randomPos();
+                
                 if(score % 5 === 0) {
-                    level++; playSound('levelUp');
+                    level++; 
+                    playSound('levelUp');
                     if(speed > 30) speed -= 10; 
-                    if(blurAlpha > 0.15) blurAlpha -= 0.05; 
-                    document.getElementById("levelDisplay").innerText = "Level: " + level;
+                    if(blurAlpha > 0.15) blurAlpha -= 0.05; // Increases the blur tail
+                    document.getElementById("levelDisplay").innerText = level;
                 }
-                document.getElementById("scoreDisplay").innerText = "Score: " + score;
-            } else snake.pop();
+                document.getElementById("scoreDisplay").innerText = score;
+            } else {
+                snake.pop();
+            }
 
             let newHead = { x: snakeX, y: snakeY };
+            
+            // Check Death Conditions
             if(snakeX<0 || snakeY<0 || snakeX>=canvas.width || snakeY>=canvas.height) { endGame(); return; }
             for(let i=0; i<snake.length; i++){ if(snakeX == snake[i].x && snakeY == snake[i].y) { endGame(); return; }}
             
@@ -228,17 +467,43 @@
         }
 
         function startGame() {
-            initAudio(); document.getElementById("startScreen").style.display = "none"; document.getElementById("gameOverScreen").style.display = "none";
-            snake = [{ x: 9 * box, y: 10 * box }]; score = 0; level = 1; speed = 80; blurAlpha = 0.4; d = "RIGHT"; isGameRunning = true; food = randomPos();
-            document.getElementById("scoreDisplay").innerText = "Score: " + score; document.getElementById("levelDisplay").innerText = "Level: " + level;
-            clearTimeout(gameLoop); draw();
+            initAudio(); 
+            document.getElementById("startScreen").style.display = "none"; 
+            document.getElementById("gameOverScreen").style.display = "none";
+            
+            // Clear canvas fully to remove old motion blur
+            ctx.fillStyle = "#080505";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            snake = [{ x: 9 * box, y: 10 * box }]; 
+            score = 0; 
+            level = 1; 
+            speed = 80; 
+            blurAlpha = 0.4; 
+            d = "RIGHT"; 
+            isGameRunning = true; 
+            changingDirection = false;
+            
+            food = randomPos(); 
+            
+            document.getElementById("scoreDisplay").innerText = score; 
+            document.getElementById("levelDisplay").innerText = level;
+            
+            clearTimeout(gameLoop); 
+            draw();
         }
 
         function endGame() {
-            isGameRunning = false; clearTimeout(gameLoop); playSound('die');
-            document.getElementById("finalScoreText").innerText = "Final Score: " + score + "\nReached Level " + level;
+            isGameRunning = false; 
+            clearTimeout(gameLoop); 
+            playSound('die');
+            document.getElementById("finalScoreText").innerText = "SCORE: " + score + " | LEVEL: " + level;
             document.getElementById("gameOverScreen").style.display = "flex";
         }
+        
+        // Initial Background Paint
+        ctx.fillStyle = "#080505";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
     </script>
 </body>
 </html>
